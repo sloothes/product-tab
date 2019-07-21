@@ -182,14 +182,17 @@
 
     const viewer = document.getElementById("viewer");
     const categoryDroplist = document.getElementById("product-category");
+    const outfitDroplist = document.getElementById("product-outfit");
     const outfitDroplistContainer = document.getElementById("product-outfit-container");
 
     $(categoryDroplist).on("change", function(){
 
-        if ( this.value == "material" ) {
-            $(outfitDroplistContainer).slideDown();
-        } else {
+        $(outfitDroplist).val("");
+
+        if ( this.value != "material" ) {
             $(outfitDroplistContainer).slideUp();
+        } else {
+            $(outfitDroplistContainer).slideDown();
         }
 
     });
