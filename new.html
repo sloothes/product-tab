@@ -389,6 +389,7 @@
                     );
 
                     $(snapshot).on("click", function(){
+
                         var src = this.data;
                         selectedSnapshot = this;
                         $(productPreviewImage).attr({"src":src});
@@ -397,6 +398,7 @@
                             "name":selectedSnapshot.name,
                             "data":selectedSnapshot.data,
                         });
+
                     });
 
                     debugMode && console.log(snapshot);
