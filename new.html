@@ -40,7 +40,7 @@
         font-size: x-large;
     }
 
-    .catalog-item {
+    .snapshot-item {
         width:85px;
         height:85px;
         margin:4px;
@@ -125,7 +125,7 @@
 
     <div class="product-snapshots-container" style="margin-bottom:0px;overflow-y:hidden;max-width:300px;">
         <div id="product-snapshots" class="product-snapshots" style="display:inline-block;width:max-content;">
-            <!-- li class="btn btn-default btn-white-outline catalog-item product-catalog-item"></li -->
+            <!-- li class="btn btn-default btn-white-outline snapshot-item product-snapshot-item"></li -->
         </div>
     </div>
 
@@ -235,11 +235,16 @@
     const imagePreviewInput   = $(productPreviewPanel).find("#image-file-input").get(0);
     const imageRemoveButton   = $(productPreviewPanel).find("#image-remove-button").get(0);
 
+    const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
     const productSnapshots = document.getElementById("product-snapshots");
+    const snapshotAddButton = document.getElementById("snapshot-add-button");
+    const snapshotMasterButton = document.getElementById("snapshot-master-button");
+    const snapshotRemoveButton = document.getElementById("snapshot-remove-button");
 
     const testProductButton = document.getElementById("product-test-button");
     const saveProductButton = document.getElementById("product-save-button");
     const cancelProductButton = document.getElementById("product-cancel-button");
+
 
     function generateUUID(){
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
@@ -251,6 +256,7 @@
     }
 
 /*
+//  demo entry.
     var entry = {
         kind: "outfit", "material", "animation",
         name: null,
@@ -279,6 +285,7 @@
 */
 
     var Signal = signals.Signal;
+    var snapshotRemoved = new Signal();
     var productFormChanged = new Signal();
 
     productFormChanged.add(function(){
@@ -375,25 +382,21 @@
 
                     var snapshot = document.createElement("li");
                     snapshot.name = name;
+                    snapshot.file = file;
                     snapshot.data = reader.result; 
                     snapshot.classList.add(
                         "btn", "btn-default", "btn-white-outline", 
-                        "catalog-item", "product-catalog-item"
+                        "snapshot-item", "product-snapshot-item"
                     );
 
                     $(snapshot).on("click", function(){
 
                         selectedSnapshot = this;
-                        $(".product-catalog-item").removeClass("selected");
+                        $(snapshotItemSelector).removeClass("selected");
                         $(this).addClass("selected");
 
                         var src = this.data;
                         $(productPreviewImage).attr({"src":src});
-
-                        //  debugMode && console.log({
-                        //      "name":selectedSnapshot.name,
-                        //      "data":selectedSnapshot.data,
-                        //  });
 
                         debugMode && console.dir(selectedSnapshot);
 
@@ -412,6 +415,25 @@
 
     });
 
+    snapshotRemoved.add(function(){
+        if ( !selectedSnapshot ) return;
+
+        var name = selectedSnapshot.name;
+        delete snapshotFiles[ name ];
+
+        $(selectedSnapshot).remove();
+        selectedSnapshot = undefined;
+
+        debugMode && console.log(snapshotFiles);
+    });
+
+    $(imageRemoveButton).on("click", function(){
+        snapshotRemoved.dispatch();
+    });
+
+    $(snapshotRemoveButton).on("click", function(){
+        snapshotRemoved.dispatch();
+    });
 
 
 
