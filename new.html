@@ -365,9 +365,14 @@
     });
 
     $(snapshotMasterButton).on("click", function(){
-        masterSnapshot = null;
-        if (!selectedSnapshot) return;
-        masterSnapshot = selectedSnapshot;
+
+        if (!selectedSnapshot) {
+            masterSnapshot = null;
+        } else {
+            masterSnapshot = selectedSnapshot;
+        }
+
+        debugMode && console.dir(masterSnapshot);
     });
 
     $(imageImportButton).on("click", function(){
