@@ -62,7 +62,7 @@
     </div>
 
     <div style="margin-bottom:10px;">
-        <div id="texture-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:70%;">Import image file</div>
+        <div id="texture-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:70%;">Import image</div>
         <input type="file" id="texture-fileinput" accept="image/*" class="hidden">
         <div id="texture-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:28%;float:right;">Remove</div>
     </div>
@@ -172,6 +172,27 @@
     <div id="product-cancel-button" class="form-control btn btn-default btn-white-outline gradient-btn" style="width:28%;float:right;">Cancel</div>
 </div>
 
+<script>
+
+(function(){
+
+    const viewer = document.getElementById("viewer");
+    const outfitDroplist = document.getElementById("product-outfit");
+    const categoryDroplist = document.getElementById("product-category");
+
+    $(categoryDroplist).on("change", function(){
+
+        if ( this.value == "material" ) {
+            $(outfitDroplist).slideDown();
+        } else {
+            $(outfitDroplist).slideUp();
+        }
+
+    });
+
+})();
+
+</script>
 
 
 
