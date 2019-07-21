@@ -435,7 +435,11 @@
 
                     });
 
+                //  Set as selected the last.
                     selectedSnapshot = snapshot;
+
+                //  Set as main snapshot the first image.
+                    if (!masterSnapshot) masterSnapshot = snapshot;
                     
                     debugMode && console.dir(snapshot);
                     $(productSnapshots).append(snapshot);
