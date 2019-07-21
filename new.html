@@ -83,19 +83,6 @@
         </h4>
     </div>
 
-    <div id="product-category-container" style="height:30px;">
-        <h4 class="x-large">Kind:
-            <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-category" class="form-control product-category-droplist" readOnly>
-                    <option value="">Select category:</option>
-                    <option value="outfit">outfit</option>
-                    <option value="material">material</option>
-                    <option value="animation">animation</option>
-                </select>
-            </div>
-        </h4>
-    </div>
-
     <div id="product-outfit-container" style="height:30px;display:none;">
         <h4 class="x-large">Slot:
             <div class="product-item-textfield" style="display:inline-block;">
@@ -111,6 +98,19 @@
                     <option value="trousers">trousers</option>
                     <option value="dress">dress</option>
                     <option value="shoes">shoes</option>
+                </select>
+            </div>
+        </h4>
+    </div>
+
+    <div id="product-category-container" style="height:30px;">
+        <h4 class="x-large">Kind:
+            <div class="product-item-textfield" style="display:inline-block;">
+                <select id="product-category" class="form-control product-category-droplist" readOnly>
+                    <option value="">Select category:</option>
+                    <option value="outfit">outfit</option>
+                    <option value="material">material</option>
+                    <option value="animation">animation</option>
                 </select>
             </div>
         </h4>
@@ -219,6 +219,15 @@
     const saveProductButton = document.getElementById("product-save-button");
     const cancelProductButton = document.getElementById("product-cancel-button");
 
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    }
+
 /*
     var entry = {
         kind: "outfit", "material", "animation",
@@ -247,27 +256,18 @@
     };
 */
 
-    function generateUUID(){
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-        .replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0;
-            var v = c == 'x'?r:r&0x3|0x8;
-            return v.toString(16);
-        }).toLocaleUpperCase();
-    }
-
     var Signal = signals.Signal;
 
     $(categoryDroplist).on("change", function(){
 
         if ( !this.value ) return;
 
-        var slot = $(outfitDroplist).val();
         var kind = $(categoryDroplist).val();
         var title = $(productTitle).val();
-        var price = $(productValue).val();
-        var publish = Boolean( $(productState).val() );
+        var value = $(productValue).val();
+        var outfit = $(outfitDroplist).val();
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var publish = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
         var entry = {
@@ -276,10 +276,10 @@
         };
 
         entry.kind = kind;
-        entry.slot = slot;
         entry.name = title;
-        entry.price = price;
+        entry.price = value;
         entry.gender = gender;
+        entry.outfit = outfit;
         entry.publish = publish;
         entry.description = description;
 
