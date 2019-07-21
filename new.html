@@ -62,9 +62,9 @@
     </div>
 
     <div style="margin-bottom:10px;">
-        <div id="texture-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:70%;">Import image</div>
-        <input type="file" id="texture-fileinput" accept="image/*" class="hidden">
-        <div id="texture-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:28%;float:right;">Remove</div>
+        <div id="image-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:70%;">Import image</div>
+        <input type="file" id="image-file-input" accept="image/*" class="hidden" multiple>
+        <div id="image-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:28%;float:right;">Remove</div>
     </div>
 
 </div>
@@ -125,12 +125,14 @@
 
     <div class="product-snapshots-container" style="margin-bottom:0px;overflow-x:scroll;overflow-y:hidden;max-width:300px;height:110px;">
         <div id="product-snapshots" class="product-snapshots" style="display:inline-block;width:max-content;height:95px;">
+        <!--
             <li class="btn btn-default btn-white-outline catalog-item product-catalog-item"></li>
             <li class="btn btn-default btn-white-outline catalog-item product-catalog-item"></li>
             <li class="btn btn-default btn-white-outline catalog-item product-catalog-item"></li>
             <li class="btn btn-default btn-white-outline catalog-item product-catalog-item"></li>
             <li class="btn btn-default btn-white-outline catalog-item product-catalog-item"></li>
             <li class="btn btn-default btn-white-outline catalog-item product-catalog-item"></li>
+        -->
         </div>
     </div>
 
@@ -234,6 +236,15 @@
     const productValue = document.getElementById("product-value");
     const productDescription = document.getElementById("product-description");
 
+    const productPreviewPanel = document.getElementById("product-preview-panel");
+    const productPreviewImage = $(productPreviewPanel).find("img#product-preview").get(0);
+    const imageImportButton   = $(productPreviewPanel).find("#image-import-button").get(0);
+    const imagePreviewInput   = $(productPreviewPanel).find("#image-file-input").get(0);
+    const imageRemoveButton   = $(productPreviewPanel).find("#image-remove-button").get(0);
+
+    const snapshotsContainer = document.getElementById("product-snapshots-container");
+    const productSnapshots = $(snapshotsContainer).find("#product-snapshots").get(0);
+
     const testProductButton = document.getElementById("product-test-button");
     const saveProductButton = document.getElementById("product-save-button");
     const cancelProductButton = document.getElementById("product-cancel-button");
@@ -325,10 +336,71 @@
         productFormChanged.dispatch();
     });
 
+    $(productTitle).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(productState).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(productValue).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(productDescription).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(imageImportButton).on("click", function(){
+        $(imagePreviewInput).val("");
+        $(imagePreviewInput).click();
+    });
+
+    var snapshotFiles = {};
+
+    $(imagePreviewInput).on("change", function(){
+        if ( this.files.length == 0 ) return;
+
+        for (var i = 0; i < this.files.length; i++ ) {
+
+            (function(){
+
+                var file = imagePreviewInput.files[i];
+                var name = imagePreviewInput.files[i].name;
+
+                snapshotFiles[ name ] = file;
+
+                var reader = new FileReader();
+                reader.onload = function() {
+
+                    $("img#product-preview").attr({"src":reader.result});
+
+                    var snapshot = document.createElement("li");
+                    snapshot.name = name;
+                    snapshot.data = reader.result; 
+                    snapshot.classList.add(
+                        "btn", "btn-default", "btn-white-outline", 
+                        "catalog-item", "product-catalog-item"
+                    );
 
 
+                    debugMode && console.log(snapshot);
+                    $(productSnapshots).append(snapshot);
 
+                };
 
+                reader.readAsDataURL(snapshotFiles[ name ]);
+
+            }();
+
+        }
+
+    });
 
 
 
