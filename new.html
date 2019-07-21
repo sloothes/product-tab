@@ -235,6 +235,8 @@
     const imagePreviewInput   = $(productPreviewPanel).find("#image-file-input").get(0);
     const imageRemoveButton   = $(productPreviewPanel).find("#image-remove-button").get(0);
 
+    const noimage = "/img/no-image-avaliable-200x200.png";
+
     const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
     const productSnapshots = document.getElementById("product-snapshots");
     const snapshotAddButton = document.getElementById("snapshot-add-button");
@@ -401,7 +403,7 @@
 
                     });
 
-                    debugMode && console.log(snapshot);
+                    debugMode && console.dir(snapshot);
                     $(productSnapshots).append(snapshot);
 
                 };
@@ -423,6 +425,7 @@
         $(selectedSnapshot).remove();
         selectedSnapshot = undefined;
 
+        productPreviewImage.src = noimage;
         debugMode && console.log(snapshotFiles);
     });
 
