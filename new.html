@@ -52,7 +52,7 @@
 </style>
 
 <div class="helpers-header newitem-header" style="margin-bottom:20px;">
-    <input type="text" id="new-product-title" class="form-control text-center x-large product-title-field" placeholder="New product title">
+    <input type="text" id="product-title" class="form-control text-center x-large product-title-field" placeholder="New product title">
 </div>
 
 <div class="product-preview-panel" style="margin-bottom:10px;">
@@ -201,6 +201,88 @@
 
 </script>
 
+<script>
+
+(function(){
+
+    const viewer = document.getElementById("viewer");
+    const outfitDroplist = document.getElementById("product-outfit");
+    const genderDroplist = document.getElementById("product-gender");
+    const categoryDroplist = document.getElementById("product-category");
+
+    const productTitle = document.getElementById("product-title");
+    const productValue = document.getElementById("product-item-value");
+    const productDescription = document.getElementById("product-description");
+
+    const testProductButton = document.getElementById("product-test-button");
+    const saveProductButton = document.getElementById("product-save-button");
+    const cancelProductButton = document.getElementById("product-cancel-button");
+
+/*
+    var entry = {
+        kind: "outfit",
+        name: null,
+        type: null,
+        gender: null,
+        slot: null,
+        outfit: null,
+        category: null,
+        thumbnail: null,
+        preview: null,
+        snapshots: [],
+        tags: [],
+        description: null,
+        deletehash: null,
+        date: null,
+        size: null,
+        width: null,
+        height: null,
+        ext: null,
+        mime: null,
+        title: null,
+        url: null,
+        uuid: null,
+        _id: null
+    };
+*/
+
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    }
+
+    var Signal = signals.Signal;
+
+    $(categoryDroplist).on("change", function(){
+
+        var slot = $(outfitDroplist).val();
+        var kind = $(categoryDroplist).val();
+        var title = $(productTitle).val();
+        var price = $(productValue).val();
+        var public = Boolean( $(productState).val() );
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var description = $(productDescription).val();
+
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
+
+        entry.kind = kind;
+        entry.slot = slot;
+        entry.name = title;
+        entry.price = price;
+        entry.gender = gender;
+        entry.public = public;
+        entry.description = description;
+
+    //  entry.snapshots = [];     // [urls].
+    //  entry.preview = preview;     // url.
+    //  entry.thumbnail = thumbnail; // url.
 
 
 
@@ -208,3 +290,11 @@
 
 
 
+
+        debugMode && console.log({"entry":entry});
+
+    });
+
+})();
+
+</script>
