@@ -482,6 +482,15 @@
 
 
 
+    $(testProductButton).on("click", function(){
+
+        debugMode && console.dir("masterSnapshot:", masterSnapshot);
+        debugMode && console.dir("selectedSnapshot:", selectedSnapshot);
+
+        productFormChanged.dispatch();
+
+    });
+
 })();
 
 </script>
