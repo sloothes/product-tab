@@ -293,7 +293,7 @@
     productFormChanged.add(function(){
 
         var kind = $(categoryDroplist).val();
-        var title = $(productTitle).val();
+        var name = $(productTitle).val();
         var value = $(productValue).val();
         var outfit = $(outfitDroplist).val();
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
@@ -305,13 +305,13 @@
             uuid: generateUUID(),
         };
 
-        entry.kind = kind;
-        entry.name = title;
-        entry.price = value;
-        entry.gender = gender;
-        entry.outfit = outfit;
-        entry.publish = publish;
-        entry.description = description;
+        if (kind) entry.kind = kind;
+        if (name) entry.name = name;
+        if (value) entry.price = value;
+        if (gender) entry.gender = gender;
+        if (outfit) entry.outfit = outfit;
+        if (publish) entry.publish = publish;
+        if (description) entry.description = description;
 
     //  entry.snapshots = [];     // [urls].
     //  entry.preview = preview;     // url.
