@@ -225,8 +225,8 @@
     });
 
     const viewer = document.getElementById("viewer");
-    const outfitDroplist = document.getElementById("product-outfit");
     const genderDroplist = document.getElementById("product-gender");
+    const outfitDroplist = document.getElementById("product-outfit");
     const categoryDroplist = document.getElementById("product-category");
 
     const productTitle = document.getElementById("product-title");
@@ -276,10 +276,9 @@
 */
 
     var Signal = signals.Signal;
+    var productFormChanged = new Signal();
 
-    $(categoryDroplist).on("change", function(){
-
-        if ( !this.value ) return;
+    productFormChanged.add(function(){
 
         var kind = $(categoryDroplist).val();
         var title = $(productTitle).val();
@@ -309,6 +308,35 @@
         debugMode && console.log({"entry":entry});
 
     });
+
+
+   $(genderDroplist).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(outfitDroplist).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(categoryDroplist).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 })();
 
