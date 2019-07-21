@@ -285,8 +285,8 @@
 */
 
     var Signal = signals.Signal;
-    var snapshotRemoved = new Signal();
     var productFormChanged = new Signal();
+    var removeSelectedSnapshot = new Signal();
 
     productFormChanged.add(function(){
 
@@ -378,7 +378,7 @@
                 var reader = new FileReader();
                 reader.onload = function() {
 
-                    $(productPreviewImage).attr({"src":reader.result});
+                    productPreviewImage.src = reader.result;
 
                     var snapshot = document.createElement("li");
                     snapshot.name = name;
@@ -391,12 +391,11 @@
 
                     $(snapshot).on("click", function(){
 
-                        selectedSnapshot = this;
                         $(snapshotItemSelector).removeClass("selected");
                         $(this).addClass("selected");
 
-                        var src = this.data;
-                        $(productPreviewImage).attr({"src":src});
+                        selectedSnapshot = this;
+                        productPreviewImage.src = this.data;
 
                         debugMode && console.dir(selectedSnapshot);
 
@@ -415,7 +414,7 @@
 
     });
 
-    snapshotRemoved.add(function(){
+    removeSelectedSnapshot.add(function(){
         if ( !selectedSnapshot ) return;
 
         var name = selectedSnapshot.name;
@@ -428,11 +427,11 @@
     });
 
     $(imageRemoveButton).on("click", function(){
-        snapshotRemoved.dispatch();
+        removeSelectedSnapshot.dispatch();
     });
 
     $(snapshotRemoveButton).on("click", function(){
-        snapshotRemoved.dispatch();
+        removeSelectedSnapshot.dispatch();
     });
 
 
