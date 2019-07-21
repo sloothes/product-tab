@@ -267,9 +267,9 @@
         slot: null,
         outfit: null,
         category: null,
-        thumbnail: null,
         preview: null,
         snapshots: [],
+        thumbnails: [],
         tags: [],
         description: null,
         deletehash: null,
@@ -286,6 +286,10 @@
     };
 */
 
+    var masterSnapshot;
+    var selectedSnapshot;
+    var snapshotFiles = {};
+
     var Signal = signals.Signal;
     var productFormChanged = new Signal();
     var removeSelectedSnapshot = new Signal();
@@ -297,6 +301,7 @@
         var value = $(productValue).val();
         var outfit = $(outfitDroplist).val();
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var preview = masterSnapshot.data;
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
@@ -310,8 +315,10 @@
         if (value) entry.price = value;
         if (gender) entry.gender = gender;
         if (outfit) entry.outfit = outfit;
-        if (published) entry.published = published;
+        if (preview) entry.preview = preview;
         if (description) entry.description = description;
+
+        entry.published = published;
 
     //  entry.snapshots = [];     // [urls].
     //  entry.preview = preview;     // url.
@@ -357,8 +364,11 @@
         productFormChanged.dispatch();
     });
 
-    var snapshotFiles = {};
-    var selectedSnapshot;
+    $(snapshotMasterButton).on("click", function(){
+        masterSnapshot = null;
+        if (!selectedSnapshot) return;
+        masterSnapshot = selectedSnapshot;
+    });
 
     $(imageImportButton).on("click", function(){
         $(imagePreviewInput).val("");
@@ -429,6 +439,8 @@
 
         productPreviewImage.src = noimage;
         debugMode && console.log(snapshotFiles);
+        debugMode && console.dir(masterSnapshot);
+
     });
 
     $(imageRemoveButton).on("click", function(){
