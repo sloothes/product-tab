@@ -205,6 +205,25 @@
 
 (function(){
 
+    const NAME = "USER";
+    const VERSION = 3;
+
+    const db = new zango.Db( NAME, VERSION, {
+        animations: true,
+        outfits:    true,
+        materials:  true,
+        textures:   true,
+        products:   true,
+    });
+
+    db.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+
     const viewer = document.getElementById("viewer");
     const outfitDroplist = document.getElementById("product-outfit");
     const genderDroplist = document.getElementById("product-gender");
