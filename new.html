@@ -57,7 +57,7 @@
 
 <div id="product-preview-panel" style="margin-bottom:10px;">
 
-    <div style="text-align:center;margin-bottom:10px;">
+    <div style="text-align:center;margin-bottom:10px;border:1px solid;">
         <img id="product-preview" height="300" style="max-width:300px;max-height:300px;margin:auto;">
     </div>
 
@@ -377,7 +377,7 @@
                 var reader = new FileReader();
                 reader.onload = function() {
 
-                    $("img#product-preview").attr({"src":reader.result});
+                    $(productPreviewImage).attr({"src":reader.result});
 
                     var snapshot = document.createElement("li");
                     snapshot.name = name;
@@ -387,6 +387,10 @@
                         "catalog-item", "product-catalog-item"
                     );
 
+                    $(snapshot).on("click", function(){
+                        var src = this.data;
+                        $(productPreviewImage).attr({"src":src});
+                    });
 
                     debugMode && console.log(snapshot);
                     $(productSnapshots).append(snapshot);
