@@ -16,6 +16,11 @@
 </script>
 
 <style>
+
+    h4.x-large {
+        height:35px;
+    }
+
     .selected {
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(0, 142, 255, 1);
     }
@@ -71,7 +76,7 @@
 
 <div id="product-basic-info-panel" style="margin-bottom:20px;">
 
-    <div id="product-gender-container" style="height:30px;">
+    <div id="product-gender-container">
         <h4 class="x-large">Sex:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-gender" class="form-control product-gender-droplist" readOnly>
@@ -83,7 +88,7 @@
         </h4>
     </div>
 
-    <div id="product-outfit-container" style="height:30px;display:none;">
+    <div id="product-outfit-container" style="display:none;">
         <h4 class="x-large">Slot:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-outfit" class="form-control product-outfit-droplist" readOnly>
@@ -103,7 +108,7 @@
         </h4>
     </div>
 
-    <div id="product-category-container" style="height:30px;">
+    <div id="product-category-container">
         <h4 class="x-large">Kind:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-category" class="form-control product-category-droplist" readOnly>
@@ -146,7 +151,7 @@
 
 <div style="margin-bottom:10px;">
 
-    <div style="height:35px;">
+    <div>
         <h4 class="x-large">Status:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-state" class="form-control helper" readOnly>
@@ -157,7 +162,7 @@
         </h4>
     </div>
 
-    <div style="height:35px;">
+    <div>
         <h4 class="x-large">Owner:
             <input type="text" id="product-owner" class="form-control product-item-textfield" disabled placeholder="User name">
         </h4>
@@ -237,6 +242,17 @@
 
     const noimage = "/img/no-image-avaliable-200x200.png";
 
+    const LoremIpsum = "Sed ac metus fermentum nisi lacinia sodales. "
+    + "Nullam porta tristique justo et laoreet. Vestibulum pulvinar, "
+    + "purus a finibus commodo, quam lectus imperdiet arcu, "
+    + "vel sollicitudin augue ligula quis lorem. "
+    + "Nunc vehicula lectus nec quam interdum, vitae mattis sapien iaculis. "
+    + "Duis et dui sed lorem hendrerit sollicitudin. "
+    + "Donec ut justo tincidunt, finibus nisi ut, fringilla augue. "
+    + "Donec a nibh nec libero pellentesque semper et vel lacus. Integer quis magna quam";
+
+    const productDescription = document.getElementById("product-description");
+
     const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
     const productSnapshots = document.getElementById("product-snapshots");
     const snapshotAddButton = document.getElementById("snapshot-add-button");
@@ -246,7 +262,6 @@
     const testProductButton = document.getElementById("product-test-button");
     const saveProductButton = document.getElementById("product-save-button");
     const cancelProductButton = document.getElementById("product-cancel-button");
-
 
     function generateUUID(){
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
@@ -289,6 +304,8 @@
     var masterSnapshot;
     var selectedSnapshot;
     var snapshotFiles = {};
+
+    productDescription.value = LoremIpsum;
 
     var Signal = signals.Signal;
     var productFormChanged = new Signal();
