@@ -316,9 +316,11 @@
         var value = $(productValue).val();
         var outfit = $(outfitDroplist).val();
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
-        var preview = masterSnapshot.data;
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
+
+        var preview;
+        if (masterSnapshot) preview = masterSnapshot.data;
 
         var entry = {
             _id: ObjectId(),
@@ -484,8 +486,8 @@
 
     $(testProductButton).on("click", function(){
 
-        debugMode && console.dir("masterSnapshot:", masterSnapshot);
-        debugMode && console.dir("selectedSnapshot:", selectedSnapshot);
+        debugMode && console.log("masterSnapshot:", masterSnapshot);
+        debugMode && console.log("selectedSnapshot:", selectedSnapshot);
 
         productFormChanged.dispatch();
 
