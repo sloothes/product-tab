@@ -142,7 +142,7 @@
 
 </div>
 
-<input type="text" id="product-item-value" class="form-control product-item-value" style="margin-bottom:10px;" placeholder="Price">
+<input type="text" id="product-value" class="form-control product-item-value" style="margin-bottom:10px;" placeholder="Price">
 
 <div class="well product-description-panel" style="height:250px;margin-bottom:20px;background:none;">
     <h4 style="margin-top:0px;">Description:</h4>
@@ -181,8 +181,8 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const categoryDroplist = document.getElementById("product-category");
     const outfitDroplist = document.getElementById("product-outfit");
+    const categoryDroplist = document.getElementById("product-category");
     const outfitDroplistContainer = document.getElementById("product-outfit-container");
 
     $(categoryDroplist).on("change", function(){
@@ -211,7 +211,8 @@
     const categoryDroplist = document.getElementById("product-category");
 
     const productTitle = document.getElementById("product-title");
-    const productValue = document.getElementById("product-item-value");
+    const productState = document.getElementById("product-state");
+    const productValue = document.getElementById("product-value");
     const productDescription = document.getElementById("product-description");
 
     const testProductButton = document.getElementById("product-test-button");
@@ -220,7 +221,7 @@
 
 /*
     var entry = {
-        kind: "outfit",
+        kind: "outfit", "material", "animation",
         name: null,
         type: null,
         gender: null,
