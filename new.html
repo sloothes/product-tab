@@ -356,6 +356,7 @@
     });
 
     var snapshotFiles = {};
+    var selectedSnapshot;
 
     $(imageImportButton).on("click", function(){
         $(imagePreviewInput).val("");
@@ -389,7 +390,13 @@
 
                     $(snapshot).on("click", function(){
                         var src = this.data;
+                        selectedSnapshot = this;
                         $(productPreviewImage).attr({"src":src});
+
+                        debugMode && console.log({
+                            "name":selectedSnapshot.name,
+                            "data":selectedSnapshot.data,
+                        });
                     });
 
                     debugMode && console.log(snapshot);
