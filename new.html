@@ -155,7 +155,7 @@
         <h4 class="x-large">Status:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-state" class="form-control helper" readOnly>
-                    <option value="0">on hold</option>
+                    <option value="">on hold</option>
                     <option value="1">published</option>
                 </select>
             </div>
@@ -260,11 +260,13 @@
 
     $(categoryDroplist).on("change", function(){
 
+        if ( !this.value ) return;
+
         var slot = $(outfitDroplist).val();
         var kind = $(categoryDroplist).val();
         var title = $(productTitle).val();
         var price = $(productValue).val();
-        var public = Boolean( $(productState).val() );
+        var publish = Boolean( $(productState).val() );
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
         var description = $(productDescription).val();
 
@@ -278,7 +280,7 @@
         entry.name = title;
         entry.price = price;
         entry.gender = gender;
-        entry.public = public;
+        entry.publish = publish;
         entry.description = description;
 
     //  entry.snapshots = [];     // [urls].
