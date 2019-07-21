@@ -390,14 +390,19 @@
 
                     $(snapshot).on("click", function(){
 
-                        var src = this.data;
                         selectedSnapshot = this;
+                        $(".product-catalog-item").removeClass("selected");
+                        $(this).addClass("selected");
+
+                        var src = this.data;
                         $(productPreviewImage).attr({"src":src});
 
-                        debugMode && console.log({
-                            "name":selectedSnapshot.name,
-                            "data":selectedSnapshot.data,
-                        });
+                        //  debugMode && console.log({
+                        //      "name":selectedSnapshot.name,
+                        //      "data":selectedSnapshot.data,
+                        //  });
+
+                        debugMode && console.log(selectedSnapshot);
 
                     });
 
