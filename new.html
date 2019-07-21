@@ -297,7 +297,7 @@
         var value = $(productValue).val();
         var outfit = $(outfitDroplist).val();
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
-        var publish = Boolean( $(productState).val() );
+        var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
         var entry = {
@@ -310,7 +310,7 @@
         if (value) entry.price = value;
         if (gender) entry.gender = gender;
         if (outfit) entry.outfit = outfit;
-        if (publish) entry.publish = publish;
+        if (published) entry.published = published;
         if (description) entry.description = description;
 
     //  entry.snapshots = [];     // [urls].
