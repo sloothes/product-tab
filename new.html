@@ -71,7 +71,7 @@
 
 <div class="product-basic-info-panel" style="margin-bottom:20px;">
 
-    <div style="height:30px;">
+    <div id="product-gender-container" style="height:30px;">
         <h4 class="x-large">Sex:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-gender" class="form-control product-gender-droplist" readOnly>
@@ -83,7 +83,7 @@
         </h4>
     </div>
 
-    <div style="height:30px;">
+    <div id="product-category-container" style="height:30px;">
         <h4 class="x-large">Kind:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-category" class="form-control product-category-droplist" readOnly>
@@ -96,7 +96,7 @@
         </h4>
     </div>
 
-    <div style="height:30px;display:none;">
+    <div id="product-outfit-container" style="height:30px;display:none;">
         <h4 class="x-large">Slot:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-outfit" class="form-control product-outfit-droplist" readOnly>
@@ -177,15 +177,15 @@
 (function(){
 
     const viewer = document.getElementById("viewer");
-    const outfitDroplist = document.getElementById("product-outfit");
     const categoryDroplist = document.getElementById("product-category");
+    const outfitDroplistContainer = document.getElementById("product-outfit-container");
 
     $(categoryDroplist).on("change", function(){
 
         if ( this.value == "material" ) {
-            $(outfitDroplist).slideDown();
+            $(outfitDroplistContainer).slideDown();
         } else {
-            $(outfitDroplist).slideUp();
+            $(outfitDroplistContainer).slideUp();
         }
 
     });
