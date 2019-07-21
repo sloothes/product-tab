@@ -460,7 +460,13 @@
         var name = selectedSnapshot.name;
         delete snapshotFiles[ name ];
 
+
         $(selectedSnapshot).remove();
+
+        if (selectedSnapshot == masterSnapshot) {
+            masterSnapshot = undefined;
+        }
+
         selectedSnapshot = undefined;
 
         productPreviewImage.src = noimage;
