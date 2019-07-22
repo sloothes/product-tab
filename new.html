@@ -512,9 +512,9 @@
         if (masterSnapshot) preview = masterSnapshot;
         
         var uploads = [];
-
         var snapshots = $(snapshotItemSelector).toArray();
-        for (var i=0; i < snapshots.length; i++) {
+
+        for (var i = 0; i < snapshots.length; i++) {
 
             (function(){
 
@@ -573,6 +573,10 @@
                             cache.add(data.link);
                         });
 
+                    }).then( function(){
+
+                        if ( --i == 0 ) debugMode && console.log(entry);
+
                     }).catch(function(err){
                         bootbox.dialog({
                             size: "small",
@@ -588,6 +592,7 @@
                                 },
                             },
                         });
+
                         console.error(err);
 
                     }); // end promise.
@@ -619,7 +624,7 @@
     //  entry.preview = preview;     // url.
     //  entry.thumbnail = thumbnail; // url.
 
-        debugMode && console.log(entry);
+    //  debugMode && console.log(entry);
 
     });
 
