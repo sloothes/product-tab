@@ -569,11 +569,10 @@
                             cache.add(data.link);
                         });
 
-                    }).then( function(){
-
-                        if ( --i == 0 ) debugMode && console.log(entry);
+                        debugMode && console.log(data.link);
 
                     }).catch(function(err){
+
                         bootbox.dialog({
                             size: "small",
                             className: "middle",
@@ -590,6 +589,10 @@
                         });
 
                         console.error(err);
+
+                    }).then( function(){
+
+                        if ( --i == 0 ) debugMode && console.log(entry);
 
                     }); // end promise.
 
