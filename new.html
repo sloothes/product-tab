@@ -252,8 +252,8 @@
     const imageRemoveButton   = $(productPreviewPanel).find("#image-remove-button").get(0);
 
     const noimage = "/img/no-image-avaliable-200x200.png";
-
     const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
+
     const productSnapshots = document.getElementById("product-snapshots");
     const snapshotAddButton = document.getElementById("snapshot-add-button");
     const snapshotMasterButton = document.getElementById("snapshot-master-button");
@@ -312,7 +312,7 @@
     productFormChanged.add(function(){
 
         var kind = $(categoryDroplist).val();
-        var name = $(productTitle).val();
+        var title = $(productTitle).val();     // name.
         var value = $(productValue).val();
         var outfit = $(outfitDroplist).val();
         var gender = viewer.contentWindow.localPlayer.outfit.getGender();
@@ -321,6 +321,78 @@
 
         var preview;
         if (masterSnapshot) preview = masterSnapshot.data;
+        
+        var uploads = [];
+        var snapshots = $(snapshotItemSelector).toArray();
+        for (var i=0; i < snapshots.length; i++) {
+
+            (function(){
+
+                var item = snapshots[i];
+
+                uploads.push( function(){
+                    new Promise(function(resolve, reject){
+
+                        var data = item.data.split(";base64,").pop(); // important!
+                        var type = item.data.split(";base64,").shift().replace("data:", "");
+
+                        var formdata = new FormData();
+                        formdata.append("type",  type);
+                        formdata.append("image", data);
+                        formdata.append("name",  item.name);
+                        formdata.append("title", title);
+
+                        var clientid = "3f1b9025064e742"; // snapshots.
+                        var endpoint = "https://api.imgur.com/3/image";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.open('POST', endpoint, true);
+                        xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                        xhttp.onreadystatechange = function () {
+                            if (this.readyState === 4) {
+                                var response = "";
+                                if (this.status >= 200 && this.status < 300) {
+                                    response = JSON.parse(this.responseText);
+                                    resolve( response ); // resolve promise.
+                                } else {
+                                    var err = JSON.parse(this.responseText).data.error;
+                                    console.error( err.type, err );
+                                    throw err;
+                                }
+                            }
+                        };
+
+                        xhttp.send(formdata);
+                        xhttp = null;
+
+                    }).then( function( response ){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }); // end promise.
+
+                }); // end push.
+
+            })();
+
+        }
+
+
+
 
         var entry = {
             _id: ObjectId(),
@@ -328,18 +400,24 @@
         };
 
         if (kind) entry.kind = kind;
-        if (name) entry.name = name;
+        if (title) entry.name = title;
         if (value) entry.price = value;
         if (gender) entry.gender = gender;
         if (outfit) entry.outfit = outfit;
         if (preview) entry.preview = preview;
         if (description) entry.description = description;
 
+        if (uploads.length) entry.uploads = uploads;
+        if (snapshots.length) entry.snapshots = snapshots;
+
         entry.published = published;
 
     //  entry.snapshots = [];     // [urls].
     //  entry.preview = preview;     // url.
     //  entry.thumbnail = thumbnail; // url.
+
+
+
 
         debugMode && console.log(entry);
 
