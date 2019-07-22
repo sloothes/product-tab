@@ -323,11 +323,13 @@
         if (masterSnapshot) preview = masterSnapshot.data;
         
         var uploads = [];
+
         var snapshots = $(snapshotItemSelector).toArray();
         for (var i=0; i < snapshots.length; i++) {
 
             (function(){
 
+                var index = i;
                 var item = snapshots[i];
 
                 uploads.push( function(){
@@ -368,24 +370,40 @@
 
                         var data = response.data;
 
+                        entry.snapshots[index] = data;
+
+
+
+
+
+
+
+
+                        return data;
+
+                    }).then( function( data ){
+
                     //  Add to cache.
                         caches.open("products").then(function(cache){
                             cache.add(data.link);
                         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    }).catch(function(err){
+                        bootbox.dialog({
+                            size: "small",
+                            className: "middle",
+                            title: `<div class="alert-icon icon-error"></div>`
+                            + `<h2 style="margin:auto;">Error!</h2>`,
+                            message: `<div>Sorry! An error occurred.</div>`
+                            + `<div>${err}</div>`,
+                            buttons: {
+                                cancel: {
+                                    label: 'Close',
+                                    className: 'btn-default',
+                                },
+                            },
+                        });
+                        console.error(err);
 
                     }); // end promise.
 
@@ -419,9 +437,6 @@
     //  entry.snapshots = [];     // [urls].
     //  entry.preview = preview;     // url.
     //  entry.thumbnail = thumbnail; // url.
-
-
-
 
         debugMode && console.log(entry);
 
