@@ -311,6 +311,11 @@
 
     productFormChanged.add(function(){
 
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
+
         var kind = $(categoryDroplist).val();
         var title = $(productTitle).val();     // name.
         var value = $(productValue).val();
@@ -320,7 +325,7 @@
         var description = $(productDescription).val();
 
         var preview;
-        if (masterSnapshot) preview = masterSnapshot.data;
+        if (masterSnapshot) preview = masterSnapshot;
         
         var uploads = [];
 
@@ -371,8 +376,8 @@
 
                         var data = response.data;
 
-                        snapshots[index] = data.link;
-                        if (isMaster) preview = data.link;
+                        entry.snapshots[index] = data.link;
+                        if (isMaster) entry.preview = data.link;
 
                         return data;
 
@@ -408,13 +413,12 @@
 
         }
 
+        if (uploads.length) entry.uploads = uploads;
+        if (snapshots.length) entry.snapshots = snapshots;
 
-
-
-        var entry = {
-            _id: ObjectId(),
-            uuid: generateUUID(),
-        };
+        while( entry.uploads.length ){
+            entry.uploads.shift().call();
+        }
 
         if (kind) entry.kind = kind;
         if (title) entry.name = title;
@@ -423,9 +427,6 @@
         if (outfit) entry.outfit = outfit;
         if (preview) entry.preview = preview;
         if (description) entry.description = description;
-
-        if (uploads.length) entry.uploads = uploads;
-        if (snapshots.length) entry.snapshots = snapshots;
 
         entry.published = published;
 
