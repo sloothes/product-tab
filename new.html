@@ -311,11 +311,6 @@
 
     productFormChanged.add(function(){
 
-        var entry = {
-            _id: ObjectId(),
-            uuid: generateUUID(),
-        };
-
         var kind = $(categoryDroplist).val();
         var title = $(productTitle).val();     // name.
         var value = $(productValue).val();
@@ -326,100 +321,12 @@
 
         var preview;
         if (masterSnapshot) preview = masterSnapshot;
-        
-        var uploads = [];
-
         var snapshots = $(snapshotItemSelector).toArray();
-        for (var i=0; i < snapshots.length; i++) {
 
-            (function(){
-
-                var index = i;
-                var item = snapshots[index];
-                var isMaster = $(item).hasClass("master");
-
-                uploads.push( function(){
-                    new Promise(function(resolve, reject){
-
-                        var data = item.data.split(";base64,").pop(); // important!
-                        var type = item.data.split(";base64,").shift().replace("data:", "");
-
-                        var formdata = new FormData();
-                        formdata.append("type",  type);
-                        formdata.append("image", data);
-                        formdata.append("name",  item.name);
-                        formdata.append("title", title);
-
-                        var clientid = "1812ad6d78faf36";  // products.
-                        var endpoint = "https://api.imgur.com/3/image";
-                        var xhttp = new XMLHttpRequest();
-                        xhttp.open("POST", endpoint, true);
-                        xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
-                        xhttp.onreadystatechange = function () {
-                            if (this.readyState === 4) {
-                                var response = "";
-                                if (this.status >= 200 && this.status < 300) {
-                                    response = JSON.parse(this.responseText);
-                                    resolve( response ); // resolve promise.
-                                } else {
-                                    var err = JSON.parse(this.responseText).data.error;
-                                    console.error( err.type, err );
-                                    throw err;
-                                }
-                            }
-                        };
-
-                        xhttp.send(formdata);
-                        xhttp = null;
-
-                    }).then( function( response ){
-
-                        var data = response.data;
-                        debugMode && console.log(data);
-
-                        entry.snapshots[index] = data.link;
-                        if (isMaster) entry.preview = data.link;
-
-                        return data;
-
-                    }).then( function( data ){
-
-                    //  Add to cache.
-                        caches.open("products").then(function(cache){
-                            cache.add(data.link);
-                        });
-
-                    }).catch(function(err){
-                        bootbox.dialog({
-                            size: "small",
-                            className: "middle",
-                            title: `<div class="alert-icon icon-error"></div>`
-                            + `<h2 style="margin:auto;">Error!</h2>`,
-                            message: `<div>Sorry! An error occurred.</div>`
-                            + `<div>${err}</div>`,
-                            buttons: {
-                                cancel: {
-                                    label: 'Close',
-                                    className: 'btn-default',
-                                },
-                            },
-                        });
-                        console.error(err);
-
-                    }); // end promise.
-
-                }); // end push.
-
-            })();
-
-        }
-
-        if (uploads.length) entry.uploads = uploads;
-        if (snapshots.length) entry.snapshots = snapshots;
-
-        while( entry.uploads.length ){
-            entry.uploads.shift().call();
-        }
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
 
         if (kind) entry.kind = kind;
         if (title) entry.name = title;
@@ -428,6 +335,7 @@
         if (outfit) entry.outfit = outfit;
         if (preview) entry.preview = preview;
         if (description) entry.description = description;
+        if (snapshots.length) entry.snapshots = snapshots;
 
         entry.published = published;
 
@@ -583,15 +491,144 @@
 
 
 
+    var testButtonClicked = new Signal();
 
+    testButtonClicked.add(function(){
 
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
+
+        var kind = $(categoryDroplist).val();
+        var title = $(productTitle).val();     // name.
+        var value = $(productValue).val();
+        var outfit = $(outfitDroplist).val();
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var published = Boolean( $(productState).val() );
+        var description = $(productDescription).val();
+
+        var preview;
+        if (masterSnapshot) preview = masterSnapshot;
+        
+        var uploads = [];
+
+        var snapshots = $(snapshotItemSelector).toArray();
+        for (var i=0; i < snapshots.length; i++) {
+
+            (function(){
+
+                var index = i;
+                var item = snapshots[index];
+                var isMaster = $(item).hasClass("master");
+
+                uploads.push( function(){
+                    new Promise(function(resolve, reject){
+
+                        var data = item.data.split(";base64,").pop(); // important!
+                        var type = item.data.split(";base64,").shift().replace("data:", "");
+
+                        var formdata = new FormData();
+                        formdata.append("type",  type);
+                        formdata.append("image", data);
+                        formdata.append("name",  item.name);
+                        formdata.append("title", title);
+
+                        var clientid = "1812ad6d78faf36";  // products.
+                        var endpoint = "https://api.imgur.com/3/image";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.open("POST", endpoint, true);
+                        xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                        xhttp.onreadystatechange = function () {
+                            if (this.readyState === 4) {
+                                var response = "";
+                                if (this.status >= 200 && this.status < 300) {
+                                    response = JSON.parse(this.responseText);
+                                    resolve( response ); // resolve promise.
+                                } else {
+                                    var err = JSON.parse(this.responseText).data.error;
+                                    console.error( err.type, err );
+                                    throw err;
+                                }
+                            }
+                        };
+
+                        xhttp.send(formdata);
+                        xhttp = null;
+
+                    }).then( function( response ){
+
+                        var data = response.data;
+                        debugMode && console.log(data);
+
+                        entry.snapshots[index] = data.link;
+                        if (isMaster) entry.preview = data.link;
+
+                        return data;
+
+                    }).then( function( data ){
+
+                    //  Add to cache.
+                        caches.open("products").then(function(cache){
+                            cache.add(data.link);
+                        });
+
+                    }).catch(function(err){
+                        bootbox.dialog({
+                            size: "small",
+                            className: "middle",
+                            title: `<div class="alert-icon icon-error"></div>`
+                            + `<h2 style="margin:auto;">Error!</h2>`,
+                            message: `<div>Sorry! An error occurred.</div>`
+                            + `<div>${err}</div>`,
+                            buttons: {
+                                cancel: {
+                                    label: 'Close',
+                                    className: 'btn-default',
+                                },
+                            },
+                        });
+                        console.error(err);
+
+                    }); // end promise.
+
+                }); // end push.
+
+            })();
+
+        }
+
+        if (uploads.length) entry.uploads = uploads;
+        if (snapshots.length) entry.snapshots = snapshots;
+
+        while( entry.uploads.length ){
+            entry.uploads.shift().call();
+        }
+
+        if (kind) entry.kind = kind;
+        if (title) entry.name = title;
+        if (value) entry.price = value;
+        if (gender) entry.gender = gender;
+        if (outfit) entry.outfit = outfit;
+        if (preview) entry.preview = preview;
+        if (description) entry.description = description;
+
+        entry.published = published;
+
+    //  entry.snapshots = [];     // [urls].
+    //  entry.preview = preview;     // url.
+    //  entry.thumbnail = thumbnail; // url.
+
+        debugMode && console.log(entry);
+
+    });
 
     $(testProductButton).on("click", function(){
 
         debugMode && console.log("masterSnapshot:", masterSnapshot);
         debugMode && console.log("selectedSnapshot:", selectedSnapshot);
 
-        productFormChanged.dispatch();
+        testButtonClicked.dispatch();
 
     });
 
