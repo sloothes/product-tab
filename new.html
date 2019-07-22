@@ -564,10 +564,6 @@
                         entry.snapshots[index] = data.link;
                         if (isMaster) entry.preview = data.link;
 
-                        return data;
-
-                    }).then( function( data ){
-
                     //  Add to cache.
                         caches.open("products").then(function(cache){
                             cache.add(data.link);
