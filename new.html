@@ -492,11 +492,12 @@
                     canvas.height = img.height;
                     $(img).one("load", function(){
 
-                        ctx.drawImage(img); // important!
+                        ctx.drawImage( img, 0, 0 );  // important!
+
                         var url = canvas.toDataURL();
+                        snapshot.style["background-image"] = `url(${url})`;
 
                         snapshot.style["background-size"] = "contain";
-                        snapshot.style["background-image"] = `url(${url})`;
                         snapshot.style["background-repeat"] = "no-repeat";
                         snapshot.style["background-position"] = "50% 50%";
 
@@ -575,11 +576,12 @@
                 canvas.height = img.height;
                 $(img).one("load", function(){
 
-                    ctx.drawImage(img); // important!
+                    ctx.drawImage( img, 0, 0 ); // important!
+
                     var url = canvas.toDataURL();
+                    snapshot.style["background-image"] = `url(${url})`;
 
                     snapshot.style["background-size"] = "contain";
-                    snapshot.style["background-image"] = `url(${url})`;
                     snapshot.style["background-repeat"] = "no-repeat";
                     snapshot.style["background-position"] = "50% 50%";
 
