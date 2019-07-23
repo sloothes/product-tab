@@ -492,7 +492,7 @@
                     canvas.height = img.height;
                     $(img).one("load", function(){
 
-                        ctx.drawImage( img, 0, 0 );  // important!
+                        ctx.drawImage( img, 0, 0, img.width, img.height );
 
                         var url = canvas.toDataURL();
                         snapshot.style["background-image"] = `url(${url})`;
@@ -576,7 +576,7 @@
                 canvas.height = img.height;
                 $(img).one("load", function(){
 
-                    ctx.drawImage( img, 0, 0 ); // important!
+                    ctx.drawImage( img, 0, 0, img.width, img.height );
 
                     var url = canvas.toDataURL();
                     snapshot.style["background-image"] = `url(${url})`;
