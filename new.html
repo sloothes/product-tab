@@ -76,7 +76,7 @@
 
 <div id="product-basic-info-panel" style="margin-bottom:20px;">
 
-    <div id="product-gender-container">
+    <div id="product-gender-container" style="display:hidden;">
         <h4 class="x-large">Sex:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-gender" class="form-control product-gender-droplist" readOnly>
@@ -188,12 +188,35 @@
 
     $(categoryDroplist).on("change", function(){
 
-        $(outfitDroplist).val("");
+        $(outfitDroplist).children().remove();
 
         if ( this.value != "material" ) {
+
+            var option = document.createElement("option");
+            option.value = "";  option.innerText = "Select slot:";
+            $(outfitDroplist).append(option);
+
+            var slots = Object.keys(viewer.contentWindow.localPlayer.outfit.toJSON());
+
+            for ( var k=0; k < slots.length; k++ ) {
+
+                if (slots[k] == undefined) break;
+                if (slots[k] == "gender") continue; // important!
+
+                var name = slots[k];
+                var option = document.createElement("option");
+                option.value = option.innerText = name;
+                $(outfitDroplist).append(option);
+
+            }
+
+            $(outfitDroplist).val("");
             $(outfitDroplistContainer).slideUp();
+
         } else {
+
             $(outfitDroplistContainer).slideDown();
+
         }
 
     });
@@ -258,6 +281,7 @@
     const productSnapshots = document.getElementById("product-snapshots");
     const snapshotAddButton = document.getElementById("snapshot-add-button");
     const snapshotMasterButton = document.getElementById("snapshot-master-button");
+    const snapshotUploadButton = document.getElementById("snapshot-upload-button");
     const snapshotRemoveButton = document.getElementById("snapshot-remove-button");
 
     const testProductButton = document.getElementById("product-test-button");
@@ -272,35 +296,6 @@
             return v.toString(16);
         }).toLocaleUpperCase();
     }
-
-/*
-//  demo entry.
-    var entry = {
-        kind: "outfit", "material", "animation",
-        name: null,
-        type: null,
-        gender: null,
-        slot: null,
-        outfit: null,
-        category: null,
-        preview: null,
-        snapshots: [],
-        thumbnails: [],
-        tags: [],
-        description: null,
-        deletehash: null,
-        date: null,
-        size: null,
-        width: null,
-        height: null,
-        ext: null,
-        mime: null,
-        title: null,
-        url: null,
-        uuid: null,
-        _id: null
-    };
-*/
 
     var masterSnapshot;
     var selectedSnapshot;
@@ -489,6 +484,34 @@
     });
 
 
+/*
+//  demo entry.
+    var entry = {
+        kind: "outfit", "material", "animation",
+        name: null,
+        type: null,
+        gender: null,
+        slot: null,
+        outfit: null,
+        category: null,
+        preview: null,
+        snapshots: [],
+        thumbnails: [],
+        tags: [],
+        description: null,
+        deletehash: null,
+        date: null,
+        size: null,
+        width: null,
+        height: null,
+        ext: null,
+        mime: null,
+        title: null,
+        url: null,
+        uuid: null,
+        _id: null
+    };
+*/
 
 //  TEST.
 
