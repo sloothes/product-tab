@@ -474,6 +474,8 @@
 
                     productPreviewImage.src = reader.result;
 
+                //  DOMElement.
+
                     var snapshot = document.createElement("li");
                     snapshot.name = name;
                     snapshot.file = file;
@@ -494,7 +496,7 @@
 
                         ctx.drawImage( img, 0, 0, img.width, img.height );
 
-                        var url = canvas.toDataURL();
+                        var url = canvas.toDataURL("image/jpeg", 0.5);
                         snapshot.style["background-image"] = `url(${url})`;
 
                         snapshot.style["background-size"] = "contain";
@@ -557,6 +559,11 @@
         //  debugMode && console.log(data);
         //  productPreviewImage.src = data;
 
+        //  File.
+
+
+        //  DOMElement.
+
             var snapshot = document.createElement("li");
             snapshot.data = productPreviewImage.src = data; 
             snapshot.name = `product snapshot ${snpCount}.jpg`;
@@ -578,7 +585,7 @@
 
                     ctx.drawImage( img, 0, 0, img.width, img.height );
 
-                    var url = canvas.toDataURL();
+                    var url = canvas.toDataURL("image/jpeg", 0.5);
                     snapshot.style["background-image"] = `url(${url})`;
 
                     snapshot.style["background-size"] = "contain";
