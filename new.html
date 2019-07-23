@@ -338,6 +338,9 @@
 
     productFormChanged.add(function(){
 
+    //  Every change in product form,
+    //  creates an fresh "entry" on-fly.
+
         var kind = $(categoryDroplist).val();
         var title = $(productTitle).val();     // name.
         var value = $(productValue).val();
@@ -550,6 +553,202 @@
 
     testButtonClicked.add(function(){
 
+        var kind = $(categoryDroplist).val();
+        var title = $(productTitle).val();
+        var value = $(productValue).val();
+        var outfit = $(outfitDroplist).val();
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var published = Boolean( $(productState).val() );
+        var description = $(productDescription).val();
+
+        var preview;
+        if (masterSnapshot) preview = masterSnapshot;
+
+        var uploads = [];
+
+        $(snapshotItemSelector).each(function(index, item){
+            debugMode && console.log( index, item );
+
+            uploads.push( function(){
+
+                Promise.resolve(function(resolve, reject){
+
+                    var name = item.name;
+                    var data = item.data.split(";base64,").pop(); // important!
+                    var type = item.data.split(";base64,").shift().replace("data:", "");
+
+                    var formdata = new FormData();
+                    formdata.append("name",  name);
+                    formdata.append("type",  type);
+                    formdata.append("image", data);
+                    formdata.append("title", title);
+
+                    var clientid = "1812ad6d78faf36"; // "products" imgur Client-ID.
+                    var endpoint = "https://api.imgur.com/3/image/8XjCMOl";
+
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.open("GET", endpoint, true); // "POST" (demo). 
+                    xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState === 4) {
+                            var response = "";
+                            debugMode && console.log(xhttp);
+                            if (this.status >= 200 && this.status < 300) {
+                                response = JSON.parse(this.responseText);
+                                resolve( response ); // resolve promise.
+                            } else {
+                                var err = JSON.parse(this.responseText).data.error;
+                                console.error( err.type, err );
+                                throw err;
+                            }
+                        }
+                    };
+
+                    xhttp.send(); // xhttp.send(formdata);
+                    xhttp = null;
+
+                }).then( function( response ){
+
+                    var data = response.data;
+                    debugMode && console.log(data);
+
+                    entry.snapshots[index] = data.link;
+
+                //  Set master.
+                    if ( $(item).hasClass("master") ) {
+                        entry.preview = data.link;
+                    }
+
+                //  Add to cache.
+                    caches.open("products").then(function(cache){
+                        cache.add(data.link);
+                    });
+
+                    debugMode && console.log(data.link);
+
+                }).catch(function(err){
+
+                    console.error(err);
+
+                }).then( function(){
+
+                    if ( index == $(snapshotItemSelector).length ) {
+                        debugMode && console.log(entry);
+                    }
+
+                }); // end promise.
+
+            }); // end push.
+
+        });
+
+    //  Every change in product form,
+    //  creates an fresh "entry" on-fly.
+
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
+
+        if (kind) entry.kind = kind;
+        if (title) entry.name = title;
+        if (value) entry.price = value;
+        if (gender) entry.gender = gender;
+        if (outfit) entry.outfit = outfit;
+        if (preview) entry.preview = preview;
+        if (description) entry.description = description;
+
+        entry.published = published;
+
+        if (snapshots.length) {
+            entry.uploads = uploads;
+            entry.snapshots = snapshots;
+            if (false) while( entry.uploads.length ){
+                entry.uploads.shift().call();
+            }
+        }
+
+    //  entry.snapshots = [];     // [urls].
+    //  entry.preview = preview;     // url.
+    //  entry.thumbnail = thumbnail; // url.
+
+        debugMode && console.log(entry);
+
+    });
+
+    $(testProductButton).on("click", function(){
+
+        debugMode && console.log("masterSnapshot:", masterSnapshot);
+        debugMode && console.log("selectedSnapshot:", selectedSnapshot);
+
+        testButtonClicked.dispatch();
+
+    });
+
+})();
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+/*
+    const imgurResponseDataDemo = {
+        account_id: null,
+        account_url: null,
+        ad_config: {showsAds: false},
+        ad_type: 0,
+        ad_url: "",
+        animated: false,
+        bandwidth: 422930,
+        datetime: 1563774104,
+        description: null,
+        edited: "0",
+        favorite: false,
+        has_sound: false,
+        height: 1194,
+        id: "zhVcPAT",
+        in_gallery: false,
+        in_most_viral: false,
+        is_ad: false,
+        link: "https://i.imgur.com/zhVcPAT.jpg",
+        nsfw: null,
+        section: null,
+        size: 211465,
+        tags: [],
+        title: "girlvania",
+        type: "image/jpeg",
+        views: 2,
+        vote: null,
+        width: 896,
+    };
+
+//  TEST.
+
+    var Signal = signals.Signal;
+    var testButtonClicked = new Signal();
+
+    testButtonClicked.add(function(){
+
+    //  Every change in product form,
+    //  creates an fresh "entry" on-fly.
+
         var entry = {
             _id: ObjectId(),
             uuid: generateUUID(),
@@ -565,8 +764,9 @@
 
         var preview;
         if (masterSnapshot) preview = masterSnapshot;
-        
+
         var uploads = [];
+
         var snapshots = $(snapshotItemSelector).toArray();
 
         for (var i = 0; i < snapshots.length; i++) {
@@ -580,13 +780,14 @@
                 uploads.push( function(){
                     new Promise(function(resolve, reject){
 
+                        var name = item.name;
                         var data = item.data.split(";base64,").pop(); // important!
                         var type = item.data.split(";base64,").shift().replace("data:", "");
 
                         var formdata = new FormData();
                         formdata.append("type",  type);
                         formdata.append("image", data);
-                        formdata.append("name",  item.name);
+                        formdata.append("name",  name);
                         formdata.append("title", title);
 
                         var clientid = "1812ad6d78faf36";  // products.
@@ -678,19 +879,11 @@
     //  entry.snapshots = [];     // [urls].
     //  entry.preview = preview;     // url.
     //  entry.thumbnail = thumbnail; // url.
-    //  debugMode && console.log(entry);
+
+        debugMode && console.log(entry);
 
     });
 
-    $(testProductButton).on("click", function(){
-
-        debugMode && console.log("masterSnapshot:", masterSnapshot);
-        debugMode && console.log("selectedSnapshot:", selectedSnapshot);
-
-        testButtonClicked.dispatch();
-
-    });
-
-})();
+*/
 
 </script>
