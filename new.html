@@ -370,20 +370,18 @@
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
-        var sslength = $(snapshotItemSelector).length;
-
-        if ( masterSnapshot ) {
-            var preview = masterSnapshot;
-            $(masterSnapshot).addClass("preview");  // important!
-        } else if ( sslength ) {
-            var preview = $(snapshotItemSelector).get(0);
-            $(masterSnapshot).addClass("preview");  // important!
-        } else {
-            var preview = undefined;
+    //  Main snapshot (preview).
+        var previewSelector = snapshotItemSelector + ".preview";
+        if ( $(previewSelector).get(0) == undefined ) {
+            if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
+            else $( $(previewSelector).get(0) ).addClass( "preview" );  // important!
         }
 
-        var $snapshots = $(snapshotItemSelector);
-        debugMode && console.log({"$snapshots":$snapshots});
+        var preview = $(previewSelector).get(0);
+        debugMode && console.log("preview:", preview);
+
+        var slength = $(snapshotItemSelector).length;
+        debugMode && console.log( "snapshots:", $(snapshotItemSelector) );
 
         var entry = {
             _id: ObjectId(),
@@ -396,8 +394,9 @@
         if (gender) entry.gender = gender;
         if (outfit) entry.outfit = outfit;
         if (preview) entry.preview = preview;
+        if (thumbnail) entry.thumbnail = thumbnail;
         if (description) entry.description = description;
-        if ($snapshots.length) entry.snapshots = $snapshots.toArray();
+        if (slength) entry.snapshots = $(snapshotItemSelector).toArray(); // [elements].
 
         entry.published = published;
 
@@ -485,7 +484,7 @@
                         "snapshot-item", "product-snapshot-item"
                     );
 
-                //  Thumbnail.
+                //  Thumbnails.
 
                     var img = new Image(85, 85);
                     var canvas = document.createElement("canvas");
@@ -572,7 +571,7 @@
                 "snapshot-item", "product-snapshot-item"
             );
 
-        //  Thumbnail.
+        //  Thumbnails.
 
             (function(){
 
@@ -727,19 +726,19 @@
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
-        const sslength = $(snapshotItemSelector).length; // important!
-
-        if ( masterSnapshot ) {
-            var preview = masterSnapshot;
-            $(masterSnapshot).addClass("preview");  // important!
-        } else if ( sslength ) {
-            var preview = $(snapshotItemSelector).get(0);
-            $(masterSnapshot).addClass("preview");  // important!
-        } else {
-            var preview = undefined;
+    //  Main (preview) snapshot.
+        var previewSelector = snapshotItemSelector + ".preview";
+        if ( $(previewSelector).get(0) == undefined ) {
+            if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
+            else $( $(previewSelector).get(0) ).addClass( "preview" );  // important!
         }
 
+        var preview = $(previewSelector).get(0);
+        debugMode && console.log("preview:", preview);
+
         var uploads = [];
+
+        var slength = $(snapshotItemSelector).length;
 
         $(snapshotItemSelector).each(function(index, item){
             debugMode && console.log( index, item );
@@ -769,7 +768,7 @@
                     xhttp.onreadystatechange = function () {
                         if (this.readyState === 4) {
                             var response = "";
-                            debugMode && console.log(this);
+                            debugMode && console.log(this); // XMLHttpRequest.
                             if (this.status >= 200 && this.status < 300) {
                                 response = JSON.parse(this.responseText);
                                 resolve( response ); // resolve promise.
@@ -792,8 +791,10 @@
                     entry.snapshots[index] = data.link;
 
                 //  Set main preview.
-                //  if ( $(item).hasClass("preview") ) ...
+                //  if ( $(item).hasClass("preview") ) {...}
                     if ( isMain ) entry.preview = data.link;
+                //  Set product thumbnail. (`https://i.imgur.com/${data.id}s.jpg`)
+                    if ( isMain ) entry.thumbnail = data.link.replace(data.id, data.id + "s");
 
                 //  Add to cache.
                     caches.open("products").then(function(cache){
@@ -808,8 +809,10 @@
 
                 }).then( function(){
 
-                    if ( index == sslength - 1 ) 
+                    if ( index == slength - 1 ) {
+                        delete entry.uploads;
                         debugMode && console.log(entry);
+                    }
 
                 }); // end promise.
 
@@ -835,7 +838,7 @@
 
         entry.published = published;
 
-        if ( sslength ) {
+        if ( slength ) {
 
             entry.uploads = uploads;                             // [functions].
             entry.snapshots = $(snapshotItemSelector).toArray(); //  [elements].
@@ -855,8 +858,8 @@
 
     $(testProductButton).on("click", function(){
 
-        debugMode && console.log("masterSnapshot:", masterSnapshot);
-        debugMode && console.log("selectedSnapshot:", selectedSnapshot);
+        debugMode && console.dir(masterSnapshot);
+        debugMode && console.dir(selectedSnapshot);
 
         testButtonClicked.dispatch();
 
@@ -1130,6 +1133,22 @@
 
     });
 
+*/
+
+/*
+//  Product thumbnail.
+    var thumbnail;
+    (function(data){
+        var img = new Image(85, 85);
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        $(img).one("load", function(){
+            ctx.drawImage( img, 0, 0, img.width, img.height );
+            thumbnail = canvas.toDataURL("image/jpeg");
+        }).attr({src: data});
+    })(preview.data);
 */
 
 </script>
