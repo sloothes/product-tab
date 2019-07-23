@@ -521,6 +521,16 @@
 
     });
 
+
+    $(snapshotAddButton).on("click", function(){
+
+        var cmd = "/product/crop";
+        var dataUrl = viewer.contentWindow.sceneHandler(cmd);
+        debugMode && console.log(dataUrl);
+
+
+    });
+
     removeSelectedSnapshot.add(function(){
 
         if ( !selectedSnapshot ) return;
