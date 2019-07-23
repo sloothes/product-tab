@@ -190,7 +190,7 @@
 
         $(outfitDroplist).children().remove();
 
-        if ( this.value != "material" ) {
+        if ( this.value == "material" ) {
 
             var option = document.createElement("option");
             option.value = "";  option.innerText = "Select slot:";
@@ -211,11 +211,11 @@
             }
 
             $(outfitDroplist).val("");
-            $(outfitDroplistContainer).slideUp();
+            $(outfitDroplistContainer).slideDown();
 
         } else {
 
-            $(outfitDroplistContainer).slideDown();
+            $(outfitDroplistContainer).slideUp();
 
         }
 
