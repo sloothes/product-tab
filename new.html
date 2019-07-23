@@ -197,6 +197,7 @@
             $(outfitDroplist).append(option);
 
             var slots = Object.keys(viewer.contentWindow.localPlayer.outfit.toJSON());
+            debugMode && console.log({"slots":slots});
 
             for ( var k=0; k < slots.length; k++ ) {
 
