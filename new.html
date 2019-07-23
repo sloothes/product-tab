@@ -200,11 +200,11 @@
 
             for ( var k=0; k < slots.length; k++ ) {
 
-                if (slots[k] == "gender") continue; // important!
+                var slot = slots[k];
 
-                var name = slots[k];
+                if (slot == "gender") continue;  // important!
                 var option = document.createElement("option");
-                option.value = option.innerText = name;
+                option.value = option.innerText = slot;
                 $(outfitDroplist).append(option);
 
             }
