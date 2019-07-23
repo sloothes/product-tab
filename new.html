@@ -135,9 +135,10 @@
     </div>
 
     <div style="text-align:center;margin-bottom:10px;">
-        <div id="snapshot-add-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:32%;float:left;">Add</div>
-        <div id="snapshot-master-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:32%;">Set main</div>
-        <div id="snapshot-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:32%;float:right;">Remove</div>
+        <div id="snapshot-add-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:fit-content;float:left;">Add</div>
+        <div id="snapshot-master-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:fit-content;">Set main</div>
+        <div id="snapshot-upload-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:fit-content;">Upload</div>
+        <div id="snapshot-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:fit-content;float:right;">Remove</div>
     </div>
 
 </div>
@@ -489,7 +490,7 @@
 
 
 
-
+//  TEST.
 
     var testButtonClicked = new Signal();
 
@@ -602,13 +603,6 @@
 
         }
 
-        if (uploads.length) entry.uploads = uploads;
-        if (snapshots.length) entry.snapshots = snapshots;
-
-        while( entry.uploads.length ){
-            entry.uploads.shift().call();
-        }
-
         if (kind) entry.kind = kind;
         if (title) entry.name = title;
         if (value) entry.price = value;
@@ -619,10 +613,17 @@
 
         entry.published = published;
 
+        if (snapshots.length) {
+            entry.uploads = uploads;
+            entry.snapshots = snapshots;
+            while( entry.uploads.length ){
+                entry.uploads.shift().call();
+            }
+        }
+
     //  entry.snapshots = [];     // [urls].
     //  entry.preview = preview;     // url.
     //  entry.thumbnail = thumbnail; // url.
-
     //  debugMode && console.log(entry);
 
     });
