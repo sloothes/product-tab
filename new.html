@@ -189,60 +189,64 @@
     var Signal = signals.Signal;
     var outfitProductDroplistUpdate = new Signal();
 
-    outfitProductDroplistUpdate.add( function (){
+    $(viewer.contentWindow).on("load", function(){
 
-        $(outfitDroplist).children().remove();
+        outfitProductDroplistUpdate.add( function (){
 
-        var option = document.createElement("option");
-        option.value = "";  option.innerText = "Select slot:";
-        $(outfitDroplist).append(option);
-
-        if ( !viewer.contentWindow ) return;
-        if ( !viewer.contentWindow.localPlayer ) return;
-        if ( !viewer.contentWindow.localPlayer.outfit ) return;
-
-        var json = viewer.contentWindow.localPlayer.outfit.toJSON();
-        var slots = Object.keys(json);  debugMode && console.log({"slots":slots});
-
-        for ( var k = 0; k < slots.length; k++ ) {
-
-            var slot = slots[k];
-
-            if (slot == "gender") continue;  // important!
-
-            var option = document.createElement("option");
-            option.value = option.innerText = slot;
-            $(outfitDroplist).append(option);
-
-        }
-
-        $(outfitDroplist).val("");
-
-    });
-
-    viewer.contentWindow.localPlayer.outfit.changed.add(function(){
-        debugMode && console.log("counting localPlayer changed signals...");
-
-        if ( categoryDroplist.value != "material") return;
-        if ( outfitDroplistContainer.style.display == "none" ) return;
-
-        outfitProductDroplistUpdate.dispatch();
-
-    });
-
-    $(categoryDroplist).on("change", function(){
-
-        if ( this.value == "material" ) {
-
-            outfitProductDroplistUpdate.dispatch();
-            $(outfitDroplistContainer).slideDown();
-
-        } else {
-
-            $(outfitDroplistContainer).slideUp();
             $(outfitDroplist).children().remove();
 
-        }
+            var option = document.createElement("option");
+            option.value = "";  option.innerText = "Select slot:";
+            $(outfitDroplist).append(option);
+
+            if ( !viewer.contentWindow ) return;
+            if ( !viewer.contentWindow.localPlayer ) return;
+            if ( !viewer.contentWindow.localPlayer.outfit ) return;
+
+            var json = viewer.contentWindow.localPlayer.outfit.toJSON();
+            var slots = Object.keys(json);  debugMode && console.log({"slots":slots});
+
+            for ( var k = 0; k < slots.length; k++ ) {
+
+                var slot = slots[k];
+
+                if (slot == "gender") continue;  // important!
+
+                var option = document.createElement("option");
+                option.value = option.innerText = slot;
+                $(outfitDroplist).append(option);
+
+            }
+
+            $(outfitDroplist).val("");
+
+        });
+
+        viewer.contentWindow.localPlayer.outfit.changed.add(function(){
+            debugMode && console.log("counting localPlayer changed signals...");
+
+            if ( categoryDroplist.value != "material") return;
+            if ( outfitDroplistContainer.style.display == "none" ) return;
+
+            outfitProductDroplistUpdate.dispatch();
+
+        });
+
+        $(categoryDroplist).on("change", function(){
+
+            if ( this.value == "material" ) {
+
+                outfitProductDroplistUpdate.dispatch();
+                $(outfitDroplistContainer).slideDown();
+
+            } else {
+
+                $(outfitDroplistContainer).slideUp();
+                $(outfitDroplist).children().remove();
+
+            }
+
+        });
 
     });
 
