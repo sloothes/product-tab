@@ -491,24 +491,32 @@
                         "snapshot-item", "product-snapshot-item"
                     );
 
+                    var selector = snapshotItemSelector;     // important!
+
                     $(snapshot).on("click", function(){
 
-                        $(snapshotItemSelector).removeClass("selected");
-                        $(this).addClass("selected");
+                        $(selector).removeClass("selected");
+                        $(snapshot).addClass("selected");         // this.
 
-                        selectedSnapshot = this;
-                        productPreviewImage.src = this.data;
+                        selectedSnapshot = snapshot;              // this.
+                        productPreviewImage.src = snapshot.data;  // this.
 
                         debugMode && console.dir(selectedSnapshot);
 
                     });
 
-                //  Set as selected the last.
+                //  Set last as selected snapshot.
+                    $(selector).removeClass("selected");
+                    $(snapshot).addClass("selected");
                     selectedSnapshot = snapshot;
 
-                //  Set as main snapshot the first image.
-                    if (!masterSnapshot) masterSnapshot = snapshot;
-                    
+                //  Set as main the first snapshot.
+                    if (!masterSnapshot) {
+                        $(selector).removeClass("preview");
+                        $(snapshot).addClass("preview");
+                        masterSnapshot = snapshot;
+                    }
+
                     debugMode && console.dir(snapshot);
                     $(productSnapshots).append(snapshot);
 
@@ -526,20 +534,69 @@
 
     snapshotAddBtnClicked.add(function(){
 
-        var cmd = "/product/crop";
     //  Direct call scene window (dont use socket).
     //  Returns a resolved promise with snapshot dataULR.
-        viewer.contentWindow.sceneHandler(cmd)
-        .then(function(data){
-            debugMode && console.log(data);
 
+        var cmd = "/product/crop";
+        viewer.contentWindow.sceneHandler(cmd).then(function(data){
 
+            productPreviewImage.src = data; // dataUrl.
+        //  debugMode && console.log(data);
 
+            var snapshot = document.createElement("li");
+            snapshot.name = name;
+            snapshot.file = file;
+            snapshot.data = data; 
+            snapshot.classList.add(
+                "btn", "btn-default", "btn-white-outline", 
+                "snapshot-item", "product-snapshot-item"
+            );
 
+        //  Thumbnail.
+            (function(){
 
+                var img = new Image(85, 85);
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                $(img).one("load", function(){
 
+                    ctx.drawImage(img); // important!
+                    var url = canvas.toDataURL();
 
+                    snapshot.style["background-size"] = "contain";
+                    snapshot.style["background-image"] = `url(${url})`;
+                    snapshot.style["background-repeat"] = "no-repeat";
+                    snapshot.style["background-position"] = "50% 50%";
 
+                    $(img).remove();
+
+                }).attr({src: data});
+
+            })();
+
+            var selector = snapshotItemSelector;     // important!
+
+            $(snapshot).on("click", function(){
+
+                $(selector).removeClass("selected");
+                $(snapshot).addClass("selected");         // this.
+
+                selectedSnapshot = snapshot;              // this.
+                productPreviewImage.src = snapshot.data;  // this.
+
+                debugMode && console.dir(selectedSnapshot);
+
+            });
+
+        //  Set as selected snapshot.
+            $(selector).removeClass("selected");
+            $(snapshot).addClass("selected");
+            selectedSnapshot = snapshot;
+
+            debugMode && console.dir(snapshot);
+            $(productSnapshots).append(snapshot);
 
         }).catch(function(err){
             console.error(err);
