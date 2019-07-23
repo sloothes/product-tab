@@ -414,13 +414,13 @@
     });
 
     $(snapshotMasterButton).on("click", function(){
-        $(snapshotItemSelector).removeClass("master");
+        $(snapshotItemSelector).removeClass("preview");
 
         if (!selectedSnapshot) {
             masterSnapshot = null;
         } else {
             masterSnapshot = selectedSnapshot;
-            $(masterSnapshot).addClass("master");
+            $(masterSnapshot).addClass("preview");
         }
 
         debugMode && console.dir(masterSnapshot);
@@ -571,7 +571,7 @@
 
             uploads.push( function(){
 
-                Promise.resolve(function(resolve, reject){
+                new Promise(function(resolve, reject){
 
                     var name = item.name;
                     var data = item.data.split(";base64,").pop(); // important!
@@ -615,7 +615,7 @@
                     entry.snapshots[index] = data.link;
 
                 //  Set master.
-                    if ( $(item).hasClass("master") ) {
+                    if ( $(item).hasClass("preview") ) {
                         entry.preview = data.link;
                     }
 
@@ -660,10 +660,10 @@
 
         entry.published = published;
 
-        if (snapshots.length) {
+        if ( $(snapshotItemSelector).length ) {
             entry.uploads = uploads;
-            entry.snapshots = snapshots;
-            if (false) while( entry.uploads.length ){
+            entry.snapshots = $(snapshotItemSelector).toArray();
+            if (true) while( entry.uploads.length ){
                 entry.uploads.shift().call();
             }
         }
@@ -775,7 +775,7 @@
 
                 var index = i;
                 var item = snapshots[index];
-                var isMaster = $(item).hasClass("master");
+                var isMaster = $(item).hasClass("preview");
 
                 uploads.push( function(){
                     new Promise(function(resolve, reject){
