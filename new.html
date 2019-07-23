@@ -202,8 +202,14 @@
         if ( !viewer.contentWindow.localPlayer ) return;
         if ( !viewer.contentWindow.localPlayer.outfit ) return;
 
+    /*
         var json = viewer.contentWindow.localPlayer.outfit.toJSON();
-        var slots = Object.keys(json);  debugMode && console.log({"slots":slots});
+        var slots = Object.keys(json).filter(function(key){
+        //  Remove "gender" from slots.
+            return key != "gender";
+        });
+
+        debugMode && console.log({"slots":slots});
 
         for ( var k = 0; k < slots.length; k++ ) {
 
@@ -216,6 +222,22 @@
             $(outfitDroplist).append(option);
 
         }
+    */
+
+        var slots = [];
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        for (var key in viewer.contentWindow[ gender ] ) {
+            if ( viewer.contentWindow[ gender ][ key ].parent ) slots.push( key ); // filter (danger!).
+        }
+
+        debugMode && console.log({"slots":slots});
+
+        slots.forEach(function(slot){
+            if (slot == "gender") return;
+            var option = document.createElement("option");
+            option.value = option.innerText = slot;
+            $(outfitDroplist).append(option);
+        });
 
         $(outfitDroplist).val("");
 
@@ -241,7 +263,7 @@
     $(viewer.contentWindow).on("load", function(){
 
         viewer.contentWindow.localPlayer.outfit.changed.add(function(){
-            debugMode && console.log("counting localPlayer changed signals...");
+        //  debugMode && console.log("counting localPlayer changed signals...");
 
             if ( categoryDroplist.value != "material") return;
             if ( outfitDroplistContainer.style.display == "none" ) return;
