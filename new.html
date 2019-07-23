@@ -63,7 +63,7 @@
 <div id="product-preview-panel" style="margin-bottom:20px;">
 
     <div style="text-align:center;margin-bottom:10px;border:1px solid;">
-        <img id="product-preview" height="300" style="max-width:300px;max-height:300px;margin:auto;">
+        <img id="product-preview" style="max-width:100%;max-height:300px;margin:auto;">
     </div>
 
     <div style="margin-bottom:10px;">
@@ -371,9 +371,20 @@
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
-        var preview;
-        if (masterSnapshot) preview = masterSnapshot;
-        var snapshots = $(snapshotItemSelector).toArray();
+        var sslength = $(snapshotItemSelector).length;
+
+        if ( masterSnapshot ) {
+            var preview = masterSnapshot;
+            $(masterSnapshot).addClass("preview");  // important!
+        } else if ( sslength ) {
+            var preview = $(snapshotItemSelector).get(0);
+            $(masterSnapshot).addClass("preview");  // important!
+        } else {
+            var preview = undefined;
+        }
+
+        var $snapshots = $(snapshotItemSelector);
+        debugMode && console.log({"$snapshots":$snapshots});
 
         var entry = {
             _id: ObjectId(),
@@ -511,11 +522,11 @@
     });
 
     removeSelectedSnapshot.add(function(){
+
         if ( !selectedSnapshot ) return;
 
         var name = selectedSnapshot.name;
         delete snapshotFiles[ name ];
-
 
         $(selectedSnapshot).remove();
 
@@ -528,6 +539,7 @@
         productPreviewImage.src = noimage;
         debugMode && console.log(snapshotFiles);
         debugMode && console.dir(masterSnapshot);
+        debugMode && productFormChanged.dispatch();
 
     });
 
@@ -583,13 +595,24 @@
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
-        var preview;
-        if (masterSnapshot) preview = masterSnapshot;
+        const sslength = $(snapshotItemSelector).length; // important!
+
+        if ( masterSnapshot ) {
+            var preview = masterSnapshot;
+            $(masterSnapshot).addClass("preview");  // important!
+        } else if ( sslength ) {
+            var preview = $(snapshotItemSelector).get(0);
+            $(masterSnapshot).addClass("preview");  // important!
+        } else {
+            var preview = undefined;
+        }
 
         var uploads = [];
 
         $(snapshotItemSelector).each(function(index, item){
             debugMode && console.log( index, item );
+
+            var isMain = $(item).hasClass("preview");
 
             uploads.push( function(){
 
@@ -614,7 +637,7 @@
                     xhttp.onreadystatechange = function () {
                         if (this.readyState === 4) {
                             var response = "";
-                            debugMode && console.log(xhttp);
+                            debugMode && console.log(this);
                             if (this.status >= 200 && this.status < 300) {
                                 response = JSON.parse(this.responseText);
                                 resolve( response ); // resolve promise.
@@ -636,17 +659,16 @@
 
                     entry.snapshots[index] = data.link;
 
-                //  Set master.
-                    if ( $(item).hasClass("preview") ) {
-                        entry.preview = data.link;
-                    }
+                //  Set main preview.
+                //  if ( $(item).hasClass("preview") ) ...
+                    if ( isMain ) entry.preview = data.link;
 
                 //  Add to cache.
                     caches.open("products").then(function(cache){
                         cache.add(data.link);
                     });
 
-                    debugMode && console.log(data.link);
+                    debugMode && console.log("link:", data.link);
 
                 }).catch(function(err){
 
@@ -654,9 +676,8 @@
 
                 }).then( function(){
 
-                    if ( index == $(snapshotItemSelector).length ) {
+                    if ( index == sslength - 1 ) 
                         debugMode && console.log(entry);
-                    }
 
                 }); // end promise.
 
@@ -682,19 +703,21 @@
 
         entry.published = published;
 
-        if ( $(snapshotItemSelector).length ) {
-            entry.uploads = uploads;
-            entry.snapshots = $(snapshotItemSelector).toArray();
-            if (true) while( entry.uploads.length ){
+        if ( sslength ) {
+
+            entry.uploads = uploads;                             // [functions].
+            entry.snapshots = $(snapshotItemSelector).toArray(); //  [elements].
+
+            while( entry.uploads.length ){
                 entry.uploads.shift().call();
             }
+
         }
 
-    //  entry.snapshots = [];     // [urls].
-    //  entry.preview = preview;     // url.
-    //  entry.thumbnail = thumbnail; // url.
-
         debugMode && console.log(entry);
+        //  entry.snapshots = [];     // [urls].
+        //  entry.preview = preview;     // url.
+        //  entry.thumbnail = thumbnail; // url.
 
     });
 
