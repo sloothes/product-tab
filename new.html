@@ -356,6 +356,7 @@
 
     var Signal = signals.Signal;
     var productFormChanged = new Signal();
+    var snapshotAddBtnClicked = new Signal();
     var removeSelectedSnapshot = new Signal();
 
     productFormChanged.add(function(){
@@ -521,10 +522,13 @@
 
     });
 
+//  SNAPSHOTS.
 
-    $(snapshotAddButton).on("click", function(){
+    snapshotAddBtnClicked.add(function(){
 
         var cmd = "/product/crop";
+    //  Direct call scene window (dont use socket).
+    //  Returns a resolved promise with snapshot dataULR.
         viewer.contentWindow.sceneHandler(cmd)
         .then(function(data){
             debugMode && console.log(data);
@@ -541,8 +545,8 @@
             console.error(err);
         });
 
-
     });
+
 
     removeSelectedSnapshot.add(function(){
 
@@ -566,6 +570,7 @@
 
     });
 
+
     $(imageRemoveButton).on("click", function(){
         removeSelectedSnapshot.dispatch();
     });
@@ -574,6 +579,9 @@
         removeSelectedSnapshot.dispatch();
     });
 
+    $(snapshotAddButton).on("click", function(){
+        snapshotAddBtnClicked.dispatch();
+    });
 
 /*
 //  demo entry.
