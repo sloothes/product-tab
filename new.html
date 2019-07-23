@@ -311,6 +311,7 @@
     const productValue = document.getElementById("product-value");
     const productDescription = document.getElementById("product-description");
 
+    const noimage = "/img/no-image-avaliable-200x200.png";
     const LoremIpsum = "Sed ac metus fermentum nisi lacinia sodales. "
     + "Nullam porta tristique justo et laoreet. Vestibulum pulvinar, "
     + "purus a finibus commodo, quam lectus imperdiet arcu, "
@@ -320,16 +321,15 @@
     + "Donec ut justo tincidunt, finibus nisi ut, fringilla augue. "
     + "Donec a nibh nec libero pellentesque semper et vel lacus. Integer quis magna quam";
 
-    productDescription.value = LoremIpsum;
-
+    const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
     const productPreviewPanel = document.getElementById("product-preview-panel");
     const productPreviewImage = $(productPreviewPanel).find("img#product-preview").get(0);
     const imageImportButton   = $(productPreviewPanel).find("#image-import-button").get(0);
     const imagePreviewInput   = $(productPreviewPanel).find("#image-file-input").get(0);
     const imageRemoveButton   = $(productPreviewPanel).find("#image-remove-button").get(0);
 
-    const noimage = "/img/no-image-avaliable-200x200.png";
-    const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
+    productPreviewImage.src = noimage;
+    productDescription.value = LoremIpsum;
 
     const productSnapshots = document.getElementById("product-snapshots");
     const snapshotAddButton = document.getElementById("snapshot-add-button");
