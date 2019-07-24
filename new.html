@@ -285,7 +285,7 @@
     const NAME = "USER";
     const VERSION = 3;
 
-    const db = new zango.Db( NAME, VERSION, {
+    var db = new zango.Db( NAME, VERSION, {
         animations: true,
         outfits:    true,
         materials:  true,
@@ -746,7 +746,7 @@
         var slength = $(snapshotItemSelector).length;
 
         $(snapshotItemSelector).each(function(index, item){
-            debugMode && console.log( index, item );
+            debugMode && console.dir( item );
 
             var isMain = $(item).hasClass("preview");
 
@@ -855,9 +855,16 @@
         }
 
         debugMode && console.log(entry);
+
         //  entry.snapshots = [];     // [urls].
         //  entry.preview = preview;     // url.
         //  entry.thumbnail = thumbnail; // url.
+
+
+
+
+
+
 
     });
 
