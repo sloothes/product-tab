@@ -282,10 +282,10 @@
 
 (function(){
 
+//  const VERSION = 3;
     const NAME = "USER";
-    const VERSION = 3;
 
-    var db = new zango.Db( NAME, VERSION, {
+    var db = new zango.Db( NAME, {
         animations: true,
         outfits:    true,
         materials:  true,
@@ -293,6 +293,7 @@
         products:   true,
     });
 
+/*
     db.open(function(err, database){
         if (err) console.error(err);
     }).then( function(){
@@ -300,6 +301,7 @@
     }).catch(function(err){
         console.error(err);
     });
+*/
 
     const viewer = document.getElementById("viewer");
     const genderDroplist = document.getElementById("product-gender");
