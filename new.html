@@ -370,15 +370,15 @@
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
-    //  Main snapshot (preview).
+    //  Set main snapshot (preview).
         var previewSelector = snapshotItemSelector + ".preview";
         if ( $(previewSelector).get(0) == undefined ) {
             if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
-            else $( $(previewSelector).get(0) ).addClass( "preview" );  // important!
+            else $( $(snapshotItemSelector).get(0) ).addClass("preview");  // important!
         }
-
         var preview = $(previewSelector).get(0);
-        debugMode && console.log("preview:", preview);
+        debugMode && console.dir( preview );
+
 
         var slength = $(snapshotItemSelector).length;
         debugMode && console.log( "snapshots:", $(snapshotItemSelector) );
@@ -615,6 +615,13 @@
             $(snapshot).addClass("selected");
             selectedSnapshot = snapshot;
 
+        //  Set as main the first snapshot.
+            if (!masterSnapshot) {
+                $(selector).removeClass("preview");
+                $(snapshot).addClass("preview");
+                masterSnapshot = snapshot;
+            }
+
             debugMode && console.dir(snapshot);
             $(productSnapshots).append(snapshot);
 
@@ -725,18 +732,17 @@
         var published = Boolean( $(productState).val() );
         var description = $(productDescription).val();
 
-    //  Main (preview) snapshot.
+    //  Set main snapshot (preview).
         var previewSelector = snapshotItemSelector + ".preview";
         if ( $(previewSelector).get(0) == undefined ) {
             if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
-            else $( $(previewSelector).get(0) ).addClass( "preview" );  // important!
+            else $( $(snapshotItemSelector).get(0) ).addClass("preview");  // important!
         }
-
         var preview = $(previewSelector).get(0);
-        debugMode && console.log("preview:", preview);
+        debugMode && console.dir( preview );
+
 
         var uploads = [];
-
         var slength = $(snapshotItemSelector).length;
 
         $(snapshotItemSelector).each(function(index, item){
@@ -767,7 +773,7 @@
                     xhttp.onreadystatechange = function () {
                         if (this.readyState === 4) {
                             var response = "";
-                            debugMode && console.log(this); // XMLHttpRequest.
+                        //  debugMode && console.log(this); // XMLHttpRequest.
                             if (this.status >= 200 && this.status < 300) {
                                 response = JSON.parse(this.responseText);
                                 resolve( response ); // resolve promise.
