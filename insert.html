@@ -15,6 +15,58 @@
 
 </script>
 
+<script>
+/*
+(function(){
+
+    const VERSION = 1;
+    const NAME = "PRODUCTS";
+
+    PRODUCTS = new zango.Db( NAME {
+        products:   true,
+        snapshots:  true,
+    });
+
+    PRODUCTS.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${PRODUCTS.name} (v${PRODUCTS.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+
+})();
+*/
+</script>
+
+<script>
+/*
+(function(){
+
+//  const VERSION = 5;
+    const NAME = "USER";
+
+    USER = new zango.Db( NAME, {
+        current:    true,
+        settings:   true,
+        animations: true,
+        outfits:    true,
+        materials:  true,
+        textures:   true,
+    });
+
+    USER.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${USER.name} (v${USER.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+
+})();
+*/
+</script>
+
 <style>
 
     h4.x-large {
@@ -188,31 +240,6 @@
     <div id="product-save-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:40%;margin:0 2%">Save</div>
     <div id="product-cancel-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:28%;float:right;">Cancel</div>
 </div>
-
-<script>
-/*
-//  const VERSION = 5;
-    const NAME = "USER";
-
-    var db = new zango.Db( NAME, {
-        current:    true,
-        settings:   true,
-        animations: true,
-        outfits:    true,
-        materials:  true,
-        textures:   true,
-        products:   true,
-    });
-
-    db.open(function(err, database){
-        if (err) console.error(err);
-    }).then( function(){
-        debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
-    }).catch(function(err){
-        console.error(err);
-    });
-*/
-</script>
 
 <script>
 
