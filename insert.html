@@ -76,22 +76,21 @@
 
 <div id="product-basic-info-panel" style="margin-bottom:20px;">
 
-    <div id="product-gender-container" style="display:none;">
+    <div id="product-outfit-container" style="display:none;">
+
         <h4 class="x-large">Sex:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-gender" class="form-control product-gender-droplist" readOnly>
+                <select id="product-gender" class="form-control gender-droplist product-gender-droplist" readOnly>
                     <option value="">Select gender:</option>
                     <option value="male">male</option>
                     <option value="female">female</option>
                 </select>
             </div>
         </h4>
-    </div>
 
-    <div id="product-outfit-container" style="display:none;">
         <h4 class="x-large">Slot:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-outfit" class="form-control product-outfit-droplist" readOnly>
+                <select id="product-outfit" class="form-control slot-droplist product-outfit-droplist" readOnly>
                     <option value="">Select slot:</option>
                     <option value="body">body</option>
                     <option value="eyes">eyes</option>
@@ -106,6 +105,7 @@
                 </select>
             </div>
         </h4>
+
     </div>
 
     <div id="product-category-container">
@@ -202,6 +202,69 @@
 */
 </script>
 
+<script>
+
+$(viewer.contentWindow).on("load", function(){
+
+    const contentWindow = this;
+
+//  const viewer = document.getElementById("viewer");
+    const genderDroplist = document.getElementById("product-gender");
+    const outfitDroplist = document.getElementById("product-outfit");
+    const categoryDroplist = document.getElementById("product-category");
+//  const genderDroplistContainer = document.getElementById("product-gender-container");
+    const outfitDroplistContainer = document.getElementById("product-outfit-container");
+    const categoryDroplistContainer = document.getElementById("product-category-container");
+
+    var Signal = signals.Signal;
+    var outfitProductDroplistUpdate = new Signal();
+
+    $(categoryDroplist).on("change", function(){
+
+        if ( this.value == "material" ) {
+
+            outfitProductDroplistUpdate.dispatch();
+            $(outfitDroplistContainer).slideDown();
+
+        } else {
+
+            $(outfitDroplistContainer).slideUp();
+            $(outfitDroplist).children().remove();
+
+        }
+
+    });
+
+    outfitProductDroplistUpdate.add( function (){
+
+        $(outfitDroplist).children().remove();
+
+        var option = document.createElement("option");
+        option.value = "";  option.innerText = "Select slot:";
+        $(outfitDroplist).append(option);
+
+        if ( !contentWindow ) return;
+        if ( !contentWindow.localPlayer ) return;
+        if ( !contentWindow.localPlayer.outfit ) return;
+
+        var slots = [];
+        var gender = contentWindow.localPlayer.outfit.getGender();
+        for (var key in contentWindow[ gender ] ) {
+            if ( contentWindow[ gender ][ key ].parent ) slots.push( key ); // filter (danger!).
+        }
+
+        debugMode && console.log({"slots":slots});
+
+        slots.forEach(function(slot){
+            if (slot == "gender") return;
+            var option = document.createElement("option");
+            option.value = option.innerText = slot;
+            $(outfitDroplist).append(option);
+        });
+
+        $(outfitDroplist).val("");
+
+    });
 
 
 
@@ -215,5 +278,37 @@
 
 
 
+
+
+    contentWindow.localPlayer.outfit.changed.add(function(){
+    //  debugMode && console.log("counting localPlayer changed signals...");
+
+        outfitProductDroplistUpdate.dispatch();
+
+        switch (categoryDroplist.value) {
+
+            case "outfit":
+
+            break;
+
+            case "material":
+
+            break;
+
+            case "texture":
+
+            break;
+
+            case "animation":
+
+            break;
+
+        }
+
+    });
+
+});
+
+</script>
 
 
