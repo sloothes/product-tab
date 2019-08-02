@@ -157,7 +157,7 @@
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-state" class="form-control helper" readOnly>
                     <option value="">on hold</option>
-                    <option value="1">published</option>
+                    <option value="1">publish</option>
                 </select>
             </div>
         </h4>
@@ -269,18 +269,18 @@ $(viewer.contentWindow).on("load", function(){
 
     productFormChanged.add(function(){
 
-        var kind = $(categoryDroplist).val();
-        var title = $(productTitle).val();     // name.
-        var value = $(productValue).val();
-        var outfit = $(outfitDroplist).val();
-        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
-        var published = Boolean( $(productState).val() );
-        var description = $(productDescription).val();
+        var gender = contentWindow.localPlayer.outfit.getGender();
+        var kind = $(categoryDroplist).val();            // kind.
+        var title = $(productTitle).val();               // name.
+        var value = round( $(productValue).val(), 2);    // price.
+        var outfit = $(outfitDroplist).val();            // slot.
+        var publish = Boolean( $(productState).val() );  // boolean.
+        var description = $(productDescription).val();   // text.
 
     //  Set main snapshot (preview).
         var previewSelector = snapshotItemSelector + ".preview";
         if ( $(previewSelector).get(0) == undefined ) {
-            if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
+            if (masterSnapshot) $(masterSnapshot).addClass("preview");     // important!
             else $( $(snapshotItemSelector).get(0) ).addClass("preview");  // important!
         }
 
@@ -304,7 +304,7 @@ $(viewer.contentWindow).on("load", function(){
         if (description) entry.description = description;
         if (slength) entry.snapshots = $(snapshotItemSelector).toArray(); // [elements].
 
-        entry.published = published;
+        entry.publish = publish;
 
         debugMode && console.log(entry);
 
@@ -683,6 +683,13 @@ $(viewer.contentWindow).on("load", function(){
 
         }
 
+    });
+
+
+    $(testProductButton).on("click", function(){
+        debugMode && console.log({
+            "entry": productFormChanged.dispatch(),
+        });
     });
 
 });
