@@ -797,9 +797,7 @@ $(viewer.contentWindow).on("load", function(){
 
 
     $(testProductButton).on("click", function(){
-        debugMode && console.log({
-            "entry": productFormChanged.dispatch(),
-        });
+        productFormChanged.dispatch();
     });
 
 });
