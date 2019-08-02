@@ -306,6 +306,10 @@ $(viewer.contentWindow).on("load", function(){
 
         entry.publish = publish;
 
+    //  Entry does not contain any product reference.
+    //  We use a pair of {entry.uuid, product.uuid},
+    //  to delever the product data to the customer.
+
         debugMode && console.log(entry);
 
     });
