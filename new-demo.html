@@ -1,0 +1,1169 @@
+<script>
+
+    (function(){
+        var component_ID = {
+            type: "tab",
+            demo: true,
+            alpha: true,
+            version: 0.1,
+            uncomplete: true,
+            kind: "component",
+            name: "new-demo.html",
+            path: "/product-tab/new-demo.html",
+            description: "creates new product in zangoDB.",
+        };
+    })();
+
+</script>
+
+<style>
+
+    h4.x-large {
+        height:35px;
+    }
+
+    .selected {
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(0, 142, 255, 1);
+    }
+
+    .product-title-field {
+        color:#ffffff;
+        background:none;
+    }
+
+    .product-item-value {
+        text-align: center;
+        font-size: x-large;
+        font-weight: bold;
+    }
+    
+    .product-item-textfield {
+        width:70%;
+        float:right;
+    }
+
+    .x-large {
+        font-size: x-large;
+    }
+
+    .snapshot-item {
+        width:85px;
+        height:85px;
+        margin:4px;
+        background-size: contain;
+        background-position:50% 50%;
+        background-repeat:no-repeat;
+    }
+
+</style>
+
+<div class="helpers-header newitem-header" style="margin-bottom:20px;">
+    <input type="text" id="product-title" class="form-control text-center x-large product-title-field" placeholder="New product title">
+</div>
+
+<div id="product-preview-panel" style="margin-bottom:20px;">
+
+    <div style="text-align:center;margin-bottom:10px;border:1px solid;">
+        <img id="product-preview" style="max-width:100%;max-height:300px;margin:auto;">
+    </div>
+
+    <div style="margin-bottom:10px;">
+        <div id="image-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:70%;">Import image</div>
+        <input type="file" id="image-file-input" accept="image/*" class="hidden" multiple>
+        <div id="image-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:28%;float:right;">Remove</div>
+    </div>
+
+</div>
+
+<div id="product-basic-info-panel" style="margin-bottom:20px;">
+
+    <div id="product-gender-container" style="display:none;">
+        <h4 class="x-large">Sex:
+            <div class="product-item-textfield" style="display:inline-block;">
+                <select id="product-gender" class="form-control product-gender-droplist" readOnly>
+                    <option value="">Select gender:</option>
+                    <option value="male">male</option>
+                    <option value="female">female</option>
+                </select>
+            </div>
+        </h4>
+    </div>
+
+    <div id="product-outfit-container" style="display:none;">
+        <h4 class="x-large">Slot:
+            <div class="product-item-textfield" style="display:inline-block;">
+                <select id="product-outfit" class="form-control product-outfit-droplist" readOnly>
+                    <option value="">Select slot:</option>
+                    <option value="body">body</option>
+                    <option value="eyes">eyes</option>
+                    <option value="hairs">hairs</option>
+                    <option value="stockings">stockings</option>
+                    <option value="underwears">underwears</option>
+                    <option value="costume">costume</option>
+                    <option value="tshirt">tshirt</option>
+                    <option value="trousers">trousers</option>
+                    <option value="dress">dress</option>
+                    <option value="shoes">shoes</option>
+                </select>
+            </div>
+        </h4>
+    </div>
+
+    <div id="product-category-container">
+        <h4 class="x-large">Kind:
+            <div class="product-item-textfield" style="display:inline-block;">
+                <select id="product-category" class="form-control product-category-droplist" readOnly>
+                    <option value="">Select category:</option>
+                    <option value="outfit">outfit</option>
+                    <option value="material">material</option>
+                    <option value="animation">animation</option>
+                </select>
+            </div>
+        </h4>
+    </div>
+
+</div>
+
+
+<div class="helpers-header product-snapshots-header" style="margin-bottom:10px;">
+
+    <h3>Snapshots:</h3>
+
+    <div class="product-snapshots-container" style="margin-bottom:0px;overflow-y:hidden;max-width:300px;">
+        <div id="product-snapshots" class="product-snapshots" style="display:inline-block;width:max-content;">
+            <!-- li class="btn btn-default btn-white-outline snapshot-item product-snapshot-item"></li -->
+        </div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:10px;">
+        <div id="snapshot-add-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:fit-content;float:left;">Add</div>
+        <div id="snapshot-master-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:fit-content;">Set main</div>
+        <div id="snapshot-upload-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:fit-content;">Upload</div>
+        <div id="snapshot-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:fit-content;float:right;">Remove</div>
+    </div>
+
+</div>
+
+<input type="text" id="product-value" class="form-control product-item-value" style="margin-bottom:10px;" placeholder="Price">
+
+<div id="product-description-panel" class="well" style="height:250px;margin-bottom:20px;background:none;">
+    <h4 style="margin-top:0px;">Description:</h4>
+    <textarea id="product-description" style="width:100%;height:180px;overflow:auto;border:none;background:none;"></textarea>
+</div>
+
+<div style="margin-bottom:10px;">
+
+    <div>
+        <h4 class="x-large">Status:
+            <div class="product-item-textfield" style="display:inline-block;">
+                <select id="product-state" class="form-control helper" readOnly>
+                    <option value="">on hold</option>
+                    <option value="1">published</option>
+                </select>
+            </div>
+        </h4>
+    </div>
+
+    <div>
+        <h4 class="x-large">Owner:
+            <input type="text" id="product-owner" class="form-control product-item-textfield" disabled placeholder="User name">
+        </h4>
+    </div>
+
+</div>
+
+<div style="margin-bottom:10px;">
+    <div id="product-test-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:28%;float:left;">Test</div>
+    <div id="product-save-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:40%;margin:0 2%">Save</div>
+    <div id="product-cancel-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:28%;float:right;">Cancel</div>
+</div>
+
+<script>
+
+(function(){
+
+    const viewer = document.getElementById("viewer");
+    const outfitDroplist = document.getElementById("product-outfit");
+    const categoryDroplist = document.getElementById("product-category");
+    const outfitDroplistContainer = document.getElementById("product-outfit-container");
+
+    var Signal = signals.Signal;
+    var outfitProductDroplistUpdate = new Signal();
+
+
+    outfitProductDroplistUpdate.add( function (){
+
+        $(outfitDroplist).children().remove();
+
+        var option = document.createElement("option");
+        option.value = "";  option.innerText = "Select slot:";
+        $(outfitDroplist).append(option);
+
+        if ( !viewer.contentWindow ) return;
+        if ( !viewer.contentWindow.localPlayer ) return;
+        if ( !viewer.contentWindow.localPlayer.outfit ) return;
+
+    /*
+        var json = viewer.contentWindow.localPlayer.outfit.toJSON();
+        var slots = Object.keys(json).filter(function(key){
+        //  Remove "gender" from slots.
+            return key != "gender";
+        });
+
+        debugMode && console.log({"slots":slots});
+
+        for ( var k = 0; k < slots.length; k++ ) {
+
+            var slot = slots[k];
+
+            if (slot == "gender") continue;  // important!
+
+            var option = document.createElement("option");
+            option.value = option.innerText = slot;
+            $(outfitDroplist).append(option);
+
+        }
+    */
+
+        var slots = [];
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        for (var key in viewer.contentWindow[ gender ] ) {
+            if ( viewer.contentWindow[ gender ][ key ].parent ) slots.push( key ); // filter (danger!).
+        }
+
+        debugMode && console.log({"slots":slots});
+
+        slots.forEach(function(slot){
+            if (slot == "gender") return;
+            var option = document.createElement("option");
+            option.value = option.innerText = slot;
+            $(outfitDroplist).append(option);
+        });
+
+        $(outfitDroplist).val("");
+
+    });
+
+
+    $(categoryDroplist).on("change", function(){
+
+        if ( this.value == "material" ) {
+
+            outfitProductDroplistUpdate.dispatch();
+            $(outfitDroplistContainer).slideDown();
+
+        } else {
+
+            $(outfitDroplistContainer).slideUp();
+            $(outfitDroplist).children().remove();
+
+        }
+
+    });
+
+    $(viewer.contentWindow).on("load", function(){
+
+        viewer.contentWindow.localPlayer.outfit.changed.add(function(){
+        //  debugMode && console.log("counting localPlayer changed signals...");
+
+            if ( categoryDroplist.value != "material") return;
+            if ( outfitDroplistContainer.style.display == "none" ) return;
+
+            outfitProductDroplistUpdate.dispatch();
+
+        });
+
+    });
+
+})();
+
+</script>
+
+<script>
+
+(function(){
+
+/*
+//  const VERSION = 4;
+    const NAME = "USER";
+
+    var db = new zango.Db( NAME, {
+        animations: true,
+        outfits:    true,
+        materials:  true,
+        textures:   true,
+        products:   true,
+    });
+
+    db.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+*/
+
+    const viewer = document.getElementById("viewer");
+    const genderDroplist = document.getElementById("product-gender");
+    const outfitDroplist = document.getElementById("product-outfit");
+    const categoryDroplist = document.getElementById("product-category");
+
+    const productTitle = document.getElementById("product-title");
+    const productState = document.getElementById("product-state");
+    const productValue = document.getElementById("product-value");
+    const productDescription = document.getElementById("product-description");
+
+    const noimage = "/img/no-image-avaliable-200x200.png";
+    const LoremIpsum = "Sed ac metus fermentum nisi lacinia sodales. "
+    + "Nullam porta tristique justo et laoreet. Vestibulum pulvinar, "
+    + "purus a finibus commodo, quam lectus imperdiet arcu, "
+    + "vel sollicitudin augue ligula quis lorem. "
+    + "Nunc vehicula lectus nec quam interdum, vitae mattis sapien iaculis. "
+    + "Duis et dui sed lorem hendrerit sollicitudin. "
+    + "Donec ut justo tincidunt, finibus nisi ut, fringilla augue. "
+    + "Donec a nibh nec libero pellentesque semper et vel lacus. Integer quis magna quam";
+
+    const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
+    const productPreviewPanel = document.getElementById("product-preview-panel");
+    const productPreviewImage = $(productPreviewPanel).find("img#product-preview").get(0);
+    const imageImportButton   = $(productPreviewPanel).find("#image-import-button").get(0);
+    const imagePreviewInput   = $(productPreviewPanel).find("#image-file-input").get(0);
+    const imageRemoveButton   = $(productPreviewPanel).find("#image-remove-button").get(0);
+
+    productPreviewImage.src = noimage;
+    productDescription.value = LoremIpsum;
+
+    const productSnapshots = document.getElementById("product-snapshots");
+    const snapshotAddButton = document.getElementById("snapshot-add-button");
+    const snapshotMasterButton = document.getElementById("snapshot-master-button");
+    const snapshotUploadButton = document.getElementById("snapshot-upload-button");
+    const snapshotRemoveButton = document.getElementById("snapshot-remove-button");
+
+    const testProductButton = document.getElementById("product-test-button");
+    const saveProductButton = document.getElementById("product-save-button");
+    const cancelProductButton = document.getElementById("product-cancel-button");
+
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    }
+
+    var masterSnapshot;
+    var selectedSnapshot;
+    var snapshotFiles = {};
+
+    var Signal = signals.Signal;
+    var productFormChanged = new Signal();
+
+    productFormChanged.add(function(){
+
+    //  Every change in product form,
+    //  creates an fresh "entry" on-fly.
+
+        var kind = $(categoryDroplist).val();
+        var title = $(productTitle).val();     // name.
+        var value = $(productValue).val();
+        var outfit = $(outfitDroplist).val();
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var published = Boolean( $(productState).val() );
+        var description = $(productDescription).val();
+
+    //  Set main snapshot (preview).
+        var previewSelector = snapshotItemSelector + ".preview";
+        if ( $(previewSelector).get(0) == undefined ) {
+            if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
+            else $( $(snapshotItemSelector).get(0) ).addClass("preview");  // important!
+        }
+        var preview = $(previewSelector).get(0);
+        debugMode && console.dir( preview );
+
+
+        var slength = $(snapshotItemSelector).length;
+        debugMode && console.log( "snapshots:", $(snapshotItemSelector) );
+
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
+
+        if (kind) entry.kind = kind;
+        if (title) entry.name = title;
+        if (value) entry.price = value;
+        if (gender) entry.gender = gender;
+        if (outfit) entry.outfit = outfit;
+        if (preview) entry.preview = preview;
+        if (description) entry.description = description;
+        if (slength) entry.snapshots = $(snapshotItemSelector).toArray(); // [elements].
+
+        entry.published = published;
+
+    //  entry.snapshots = [];     // [urls].
+    //  entry.preview = preview;     // url.
+    //  entry.thumbnail = thumbnail; // url.
+
+        debugMode && console.log(entry);
+
+    });
+
+
+   $(genderDroplist).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(outfitDroplist).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(categoryDroplist).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(productTitle).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(productState).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(productValue).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+    $(productDescription).on("change", function(){
+        if ( !this.value ) return;
+        productFormChanged.dispatch();
+    });
+
+
+
+//  SNAPSHOTS.
+
+    var snpCount = 0;     // snapshots counter.
+
+    var snapshotFileImported = new Signal();
+    var addSnapshotBtnClicked = new Signal();
+    var removeSelectedSnapshot = new Signal();
+
+    snapshotFileImported.add(function(files){
+
+        if ( files.length == 0 ) return;
+
+        for (var i = 0; i < files.length; i++ ) {
+
+            ++snpCount;    // snapshots counter.
+
+            (function(){
+
+                var file = files[i];
+                var name = files[i].name;
+                snapshotFiles[ name ] = file;
+
+                var reader = new FileReader();
+                reader.onload = function() {
+
+                    productPreviewImage.src = reader.result;
+
+                //  DOMElement.
+
+                    var snapshot = document.createElement("li");
+                    snapshot.name = name;
+                    snapshot.file = file;
+                    snapshot.data = reader.result; 
+                    snapshot.classList.add(
+                        "btn", "btn-default", "btn-white-outline", 
+                        "snapshot-item", "product-snapshot-item"
+                    );
+
+                //  Thumbnails.
+
+                    var img = new Image(85, 85);
+                    var canvas = document.createElement("canvas");
+                    var ctx = canvas.getContext("2d");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    $(img).one("load", function(){
+
+                        ctx.drawImage( img, 0, 0, img.width, img.height );
+
+                        var url = canvas.toDataURL("image/jpeg", 0.5);
+                        snapshot.style["background-image"] = `url(${url})`;
+
+                        snapshot.style["background-size"] = "contain";
+                        snapshot.style["background-repeat"] = "no-repeat";
+                        snapshot.style["background-position"] = "50% 50%";
+
+                        $(img).remove();
+
+                    }).attr({src: reader.result});
+
+                    var selector = snapshotItemSelector;     // important!
+
+                    $(snapshot).on("click", function(){
+
+                        $(selector).removeClass("selected");
+                        $(snapshot).addClass("selected");         // this.
+
+                        selectedSnapshot = snapshot;              // this.
+                        productPreviewImage.src = snapshot.data;  // this.
+
+                        debugMode && console.dir(selectedSnapshot);
+
+                    });
+
+                //  Set last as selected snapshot.
+                    $(selector).removeClass("selected");
+                    $(snapshot).addClass("selected");
+                    selectedSnapshot = snapshot;
+
+                //  Set as main the first snapshot.
+                    if (!masterSnapshot) {
+                        $(selector).removeClass("preview");
+                        $(snapshot).addClass("preview");
+                        masterSnapshot = snapshot;
+                    }
+
+                    debugMode && console.dir(snapshot);
+                    $(productSnapshots).append(snapshot);
+
+                };
+
+                reader.readAsDataURL(snapshotFiles[ name ]);
+
+            })();
+
+        }
+
+    });
+
+    addSnapshotBtnClicked.add(function(){
+
+    //  Direct call scene window (dont use socket).
+    //  Returns a resolved promise with snapshot dataULR.
+
+        ++snpCount; // snapshot counter.
+
+        var cmd = "/product/crop";
+        viewer.contentWindow.sceneHandler(cmd).then(function(data){
+
+        //  debugMode && console.log(data);
+        //  productPreviewImage.src = data;
+
+        //  File.
+
+
+        //  DOMElement.
+
+            var snapshot = document.createElement("li");
+            snapshot.data = productPreviewImage.src = data; 
+            snapshot.name = `product snapshot ${snpCount}.jpg`;
+            snapshot.classList.add(
+                "btn", "btn-default", "btn-white-outline", 
+                "snapshot-item", "product-snapshot-item"
+            );
+
+        //  Thumbnails.
+
+            (function(){
+
+                var img = new Image(85, 85);
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                $(img).one("load", function(){
+
+                    ctx.drawImage( img, 0, 0, img.width, img.height );
+
+                    var url = canvas.toDataURL("image/jpeg", 0.5);
+                    snapshot.style["background-image"] = `url(${url})`;
+
+                    snapshot.style["background-size"] = "contain";
+                    snapshot.style["background-repeat"] = "no-repeat";
+                    snapshot.style["background-position"] = "50% 50%";
+
+                    $(img).remove();
+
+                }).attr({src: data});
+
+            })();
+
+            var selector = snapshotItemSelector;     // important!
+
+            $(snapshot).on("click", function(){
+
+                $(selector).removeClass("selected");
+                $(snapshot).addClass("selected");         // this.
+
+                selectedSnapshot = snapshot;              // this.
+                productPreviewImage.src = snapshot.data;  // this.
+
+                debugMode && console.dir(selectedSnapshot);
+
+            });
+
+        //  Set as selected snapshot.
+            $(selector).removeClass("selected");
+            $(snapshot).addClass("selected");
+            selectedSnapshot = snapshot;
+
+        //  Set as main the first snapshot.
+            if (!masterSnapshot) {
+                $(selector).removeClass("preview");
+                $(snapshot).addClass("preview");
+                masterSnapshot = snapshot;
+            }
+
+            debugMode && console.dir(snapshot);
+            $(productSnapshots).append(snapshot);
+
+        }).catch(function(err){
+            console.error(err);
+        });
+
+    });
+
+
+    removeSelectedSnapshot.add(function(){
+
+        if ( !selectedSnapshot ) return;
+
+        var name = selectedSnapshot.name;
+        delete snapshotFiles[ name ];
+
+        $(selectedSnapshot).remove();
+
+        if (selectedSnapshot == masterSnapshot) {
+            masterSnapshot = undefined;
+        }
+
+        selectedSnapshot = undefined;
+
+        productPreviewImage.src = noimage;
+        debugMode && console.log(snapshotFiles);
+        debugMode && console.dir(masterSnapshot);
+        debugMode && productFormChanged.dispatch();
+
+    });
+
+
+    $(imageImportButton).on("click", function(){
+        $(imagePreviewInput).val("");
+        $(imagePreviewInput).click();
+    });
+
+    $(imagePreviewInput).on("change", function(){
+        snapshotFileImported.dispatch(this.files);
+    });
+
+    $(snapshotAddButton).on("click", function(){
+        addSnapshotBtnClicked.dispatch();
+    });
+
+    $(imageRemoveButton).on("click", function(){
+        removeSelectedSnapshot.dispatch();
+    });
+
+    $(snapshotRemoveButton).on("click", function(){
+        removeSelectedSnapshot.dispatch();
+    });
+
+    $(snapshotMasterButton).on("click", function(){
+        $(snapshotItemSelector).removeClass("preview");
+
+        if (!selectedSnapshot) {
+            masterSnapshot = null;
+        } else {
+            masterSnapshot = selectedSnapshot;
+            $(masterSnapshot).addClass("preview");
+        }
+
+        debugMode && console.dir(masterSnapshot);
+    });
+
+/*
+//  demo entry.
+    var entry = {
+        kind: "outfit", "material", "animation",
+        name: null,
+        type: null,
+        gender: null,
+        slot: null,
+        outfit: null,
+        category: null,
+        preview: null,
+        snapshots: [],
+        thumbnails: [],
+        tags: [],
+        description: null,
+        deletehash: null,
+        date: null,
+        size: null,
+        width: null,
+        height: null,
+        ext: null,
+        mime: null,
+        title: null,
+        url: null,
+        uuid: null,
+        _id: null
+    };
+*/
+
+//  TEST.
+
+    var testButtonClicked = new Signal();
+
+    testButtonClicked.add(function(){
+
+        var kind = $(categoryDroplist).val();
+        var title = $(productTitle).val();
+        var value = $(productValue).val();
+        var outfit = $(outfitDroplist).val();
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var published = Boolean( $(productState).val() );
+        var description = $(productDescription).val();
+
+    //  Set main snapshot (preview).
+        var previewSelector = snapshotItemSelector + ".preview";
+        if ( $(previewSelector).get(0) == undefined ) {
+            if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
+            else $( $(snapshotItemSelector).get(0) ).addClass("preview");  // important!
+        }
+        var preview = $(previewSelector).get(0);
+        debugMode && console.dir( preview );
+
+
+        var uploads = [];
+        var slength = $(snapshotItemSelector).length;
+
+        $(snapshotItemSelector).each(function(index, item){
+            debugMode && console.dir( item );
+
+            var isMain = $(item).hasClass("preview");
+
+            uploads.push( function(){
+
+                new Promise(function(resolve, reject){
+
+                    var name = item.name;
+                    var data = item.data.split(";base64,").pop(); // important!
+                    var type = item.data.split(";base64,").shift().replace("data:", "");
+
+                    var formdata = new FormData();
+                    formdata.append("name",  name);
+                    formdata.append("type",  type);
+                    formdata.append("image", data);
+                    formdata.append("title", title);
+
+                    var clientid = "1812ad6d78faf36"; // "products" imgur Client-ID.
+                    var endpoint = "https://api.imgur.com/3/image/8XjCMOl";
+
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.open("GET", endpoint, true); // "POST" (demo). 
+                    xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState === 4) {
+                            var response = "";
+                        //  debugMode && console.log(this); // XMLHttpRequest.
+                            if (this.status >= 200 && this.status < 300) {
+                                response = JSON.parse(this.responseText);
+                                resolve( response ); // resolve promise.
+                            } else {
+                                var err = JSON.parse(this.responseText).data.error;
+                                console.error( err.type, err );
+                                throw err;
+                            }
+                        }
+                    };
+
+                    xhttp.send(); // xhttp.send(formdata);
+                    xhttp = null;
+
+                }).then( function( response ){
+
+                    var data = response.data;
+                    debugMode && console.log(data);
+
+                    entry.snapshots[index] = data.link;
+
+                //  Set main preview.
+                //  if ( $(item).hasClass("preview") ) {...}
+                    if ( isMain ) entry.preview = data.link;
+                //  Set product thumbnail. (`https://i.imgur.com/${data.id}s.jpg`)
+                    if ( isMain ) entry.thumbnail = data.link.replace(data.id, data.id + "s");
+
+                //  Add to cache.
+                    caches.open("products").then(function(cache){
+                        cache.add(data.link);
+                    });
+
+                    debugMode && console.log("link:", data.link);
+
+                }).catch(function(err){
+
+                    console.error(err);
+
+                }).then( function(){
+
+                    if ( index == slength - 1 ) {
+                        delete entry.uploads;
+                        debugMode && console.log(entry);
+                    }
+
+                }); // end promise.
+
+            }); // end push.
+
+        });
+
+    //  Every change in product form,
+    //  creates an fresh "entry" on-fly.
+
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
+
+        if (kind) entry.kind = kind;
+        if (title) entry.name = title;
+        if (value) entry.price = value;
+        if (gender) entry.gender = gender;
+        if (outfit) entry.outfit = outfit;
+        if (preview) entry.preview = preview;
+        if (description) entry.description = description;
+
+        entry.published = published;
+
+        if ( slength ) {
+
+            entry.uploads = uploads;                             // [functions].
+            entry.snapshots = $(snapshotItemSelector).toArray(); //  [elements].
+
+            while( entry.uploads.length ){
+                entry.uploads.shift().call();
+            }
+
+        }
+
+        debugMode && console.log(entry);
+
+        //  entry.snapshots = [];     // [urls].
+        //  entry.preview = preview;     // url.
+        //  entry.thumbnail = thumbnail; // url.
+
+
+
+
+
+
+
+    });
+
+    $(testProductButton).on("click", function(){
+
+        debugMode && console.dir(masterSnapshot);
+        debugMode && console.dir(selectedSnapshot);
+
+        testButtonClicked.dispatch();
+
+    });
+
+})();
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+/*
+    $(imagePreviewInput).on("change", function(){
+        if ( this.files.length == 0 ) return;
+
+        for (var i = 0; i < this.files.length; i++ ) {
+
+            ++snpCount; // snapshot counter.
+
+            (function(){
+
+                var file = imagePreviewInput.files[i];
+                var name = imagePreviewInput.files[i].name;
+
+                snapshotFiles[ name ] = file;
+
+                var reader = new FileReader();
+                reader.onload = function() {
+
+                    productPreviewImage.src = reader.result;
+
+                    var snapshot = document.createElement("li");
+                    snapshot.name = name;
+                    snapshot.file = file;
+                    snapshot.data = reader.result; 
+                    snapshot.classList.add(
+                        "btn", "btn-default", "btn-white-outline", 
+                        "snapshot-item", "product-snapshot-item"
+                    );
+
+                    var selector = snapshotItemSelector;     // important!
+
+                    $(snapshot).on("click", function(){
+
+                        $(selector).removeClass("selected");
+                        $(snapshot).addClass("selected");         // this.
+
+                        selectedSnapshot = snapshot;              // this.
+                        productPreviewImage.src = snapshot.data;  // this.
+
+                        debugMode && console.dir(selectedSnapshot);
+
+                    });
+
+                //  Set last as selected snapshot.
+                    $(selector).removeClass("selected");
+                    $(snapshot).addClass("selected");
+                    selectedSnapshot = snapshot;
+
+                //  Set as main the first snapshot.
+                    if (!masterSnapshot) {
+                        $(selector).removeClass("preview");
+                        $(snapshot).addClass("preview");
+                        masterSnapshot = snapshot;
+                    }
+
+                    debugMode && console.dir(snapshot);
+                    $(productSnapshots).append(snapshot);
+
+                };
+
+                reader.readAsDataURL(snapshotFiles[ name ]);
+
+            })();
+
+        }
+
+    });
+*/
+
+/*
+    const imgurResponseDataDemo = {
+        account_id: null,
+        account_url: null,
+        ad_config: {showsAds: false},
+        ad_type: 0,
+        ad_url: "",
+        animated: false,
+        bandwidth: 422930,
+        datetime: 1563774104,
+        description: null,
+        edited: "0",
+        favorite: false,
+        has_sound: false,
+        height: 1194,
+        id: "zhVcPAT",
+        in_gallery: false,
+        in_most_viral: false,
+        is_ad: false,
+        link: "https://i.imgur.com/zhVcPAT.jpg",
+        nsfw: null,
+        section: null,
+        size: 211465,
+        tags: [],
+        title: "girlvania",
+        type: "image/jpeg",
+        views: 2,
+        vote: null,
+        width: 896,
+    };
+
+//  TEST.
+
+    var Signal = signals.Signal;
+    var testButtonClicked = new Signal();
+
+    testButtonClicked.add(function(){
+
+    //  Every change in product form,
+    //  creates an fresh "entry" on-fly.
+
+        var entry = {
+            _id: ObjectId(),
+            uuid: generateUUID(),
+        };
+
+        var kind = $(categoryDroplist).val();
+        var title = $(productTitle).val();     // name.
+        var value = $(productValue).val();
+        var outfit = $(outfitDroplist).val();
+        var gender = viewer.contentWindow.localPlayer.outfit.getGender();
+        var published = Boolean( $(productState).val() );
+        var description = $(productDescription).val();
+
+        var preview;
+        if (masterSnapshot) preview = masterSnapshot;
+
+        var uploads = [];
+
+        var snapshots = $(snapshotItemSelector).toArray();
+
+        for (var i = 0; i < snapshots.length; i++) {
+
+            (function(){
+
+                var index = i;
+                var item = snapshots[index];
+                var isMaster = $(item).hasClass("preview");
+
+                uploads.push( function(){
+                    new Promise(function(resolve, reject){
+
+                        var name = item.name;
+                        var data = item.data.split(";base64,").pop(); // important!
+                        var type = item.data.split(";base64,").shift().replace("data:", "");
+
+                        var formdata = new FormData();
+                        formdata.append("type",  type);
+                        formdata.append("image", data);
+                        formdata.append("name",  name);
+                        formdata.append("title", title);
+
+                        var clientid = "1812ad6d78faf36";  // products.
+                        var endpoint = "https://api.imgur.com/3/image";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.open("POST", endpoint, true);
+                        xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                        xhttp.onreadystatechange = function () {
+                            if (this.readyState === 4) {
+                                var response = "";
+                                if (this.status >= 200 && this.status < 300) {
+                                    response = JSON.parse(this.responseText);
+                                    resolve( response ); // resolve promise.
+                                } else {
+                                    var err = JSON.parse(this.responseText).data.error;
+                                    console.error( err.type, err );
+                                    throw err;
+                                }
+                            }
+                        };
+
+                        xhttp.send(formdata);
+                        xhttp = null;
+
+                    }).then( function( response ){
+
+                        var data = response.data;
+                        debugMode && console.log(data);
+
+                        entry.snapshots[index] = data.link;
+                        if (isMaster) entry.preview = data.link;
+
+                    //  Add to cache.
+                        caches.open("products").then(function(cache){
+                            cache.add(data.link);
+                        });
+
+                        debugMode && console.log(data.link);
+
+                    }).catch(function(err){
+
+                        bootbox.dialog({
+                            size: "small",
+                            className: "middle",
+                            title: `<div class="alert-icon icon-error"></div>`
+                            + `<h2 style="margin:auto;">Error!</h2>`,
+                            message: `<div>Sorry! An error occurred.</div>`
+                            + `<div>${err}</div>`,
+                            buttons: {
+                                cancel: {
+                                    label: 'Close',
+                                    className: 'btn-default',
+                                },
+                            },
+                        });
+
+                        console.error(err);
+
+                    }).then( function(){
+
+                        if ( --i == 0 ) debugMode && console.log(entry);
+
+                    }); // end promise.
+
+                }); // end push.
+
+            })();
+
+        }
+
+        if (kind) entry.kind = kind;
+        if (title) entry.name = title;
+        if (value) entry.price = value;
+        if (gender) entry.gender = gender;
+        if (outfit) entry.outfit = outfit;
+        if (preview) entry.preview = preview;
+        if (description) entry.description = description;
+
+        entry.published = published;
+
+        if (snapshots.length) {
+            entry.uploads = uploads;
+            entry.snapshots = snapshots;
+            while( entry.uploads.length ){
+                entry.uploads.shift().call();
+            }
+        }
+
+    //  entry.snapshots = [];     // [urls].
+    //  entry.preview = preview;     // url.
+    //  entry.thumbnail = thumbnail; // url.
+
+        debugMode && console.log(entry);
+
+    });
+
+*/
+
+/*
+//  Product thumbnail.
+    var thumbnail;
+    (function(data){
+        var img = new Image(85, 85);
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        $(img).one("load", function(){
+            ctx.drawImage( img, 0, 0, img.width, img.height );
+            thumbnail = canvas.toDataURL("image/jpeg");
+        }).attr({src: data});
+    })(preview.data);
+*/
+
+</script>
