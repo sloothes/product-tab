@@ -78,9 +78,10 @@
     </div>
 
     <div style="margin-bottom:10px;">
-        <div id="image-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:70%;">Import image</div>
         <input type="file" id="image-file-input" accept="image/*" class="hidden" multiple>
-        <div id="image-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:28%;float:right;">Remove</div>
+        <div id="image-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:33%;">Import</div>
+        <div id="image-upload-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:33%;">Upload</div>
+        <div id="image-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:33%;float:right;">Remove</div>
     </div>
 
 </div>
@@ -247,8 +248,9 @@ $(viewer.contentWindow).on("load", function(){
 
     const productPreviewPanel = document.getElementById("product-preview-panel");
     const productPreviewImage = $(productPreviewPanel).find("img#product-preview").get(0);
-    const imageImportButton   = $(productPreviewPanel).find("#image-import-button").get(0);
     const imagePreviewInput   = $(productPreviewPanel).find("#image-file-input").get(0);
+    const imageImportButton   = $(productPreviewPanel).find("#image-import-button").get(0);
+    const imageUploadButton   = $(productPreviewPanel).find("#image-upload-button").get(0);
     const imageRemoveButton   = $(productPreviewPanel).find("#image-remove-button").get(0);
 
     productPreviewImage.src = noimage;
@@ -403,6 +405,7 @@ $(viewer.contentWindow).on("load", function(){
 
 //  BUTTON UPLOAD.
 
+    $(imageUploadButton).on("click", uploadSelectedSnapshot);
     $(snapshotUploadButton).on("click", uploadSelectedSnapshot);
 
     function uploadSelectedSnapshot(){
