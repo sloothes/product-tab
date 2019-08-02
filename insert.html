@@ -306,9 +306,10 @@ $(viewer.contentWindow).on("load", function(){
 
         entry.publish = publish;
 
-    //  Entry does not contain any product reference.
-    //  We use a pair of {entry.uuid, product.uuid},
-    //  to delever the product data to the customer.
+    //  Entry does not contain any outfit reference.
+    //  We use a pair of {product.uuid, outfit.uuid},
+    //  to connect the product with the outfit and
+    //  deliver the data to the customer.
 
         debugMode && console.log(entry);
 
