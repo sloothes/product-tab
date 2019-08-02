@@ -68,8 +68,10 @@
             (function(){
                 const productPreview = $("img#product-preview").get(0);
                 $(productPreview).on("load", function(){
-                    window.URL.revokeObjectURL(this.src); // important!
-                    debugMode && console.log("revoked", this.src);
+                    if ( this.src.startsWith("blob:") ) {
+                        window.URL.revokeObjectURL(this.src); // important!
+                        debugMode && console.log("revoked", this.src);
+                    }
                 });
             })();
         </script>
