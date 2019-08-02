@@ -283,9 +283,9 @@ $(viewer.contentWindow).on("load", function(){
             if (masterSnapshot) $(masterSnapshot).addClass("preview");  // important!
             else $( $(snapshotItemSelector).get(0) ).addClass("preview");  // important!
         }
+
         var preview = $(previewSelector).get(0);
         debugMode && console.dir( preview );
-
 
         var slength = $(snapshotItemSelector).length;
         debugMode && console.log( "snapshots:", $(snapshotItemSelector) );
@@ -610,15 +610,18 @@ $(viewer.contentWindow).on("load", function(){
 
     $(categoryDroplist).on("change", function(){
 
-        if ( this.value == "material" ) {
+        switch (this.value) {
 
-            outfitProductDroplistUpdate.dispatch();
-            $(outfitDroplistContainer).slideDown();
+            case "outfit":
+            case "material":
+                outfitProductDroplistUpdate.dispatch();
+                $(outfitDroplistContainer).slideDown();
+            break;
 
-        } else {
-
-            $(outfitDroplistContainer).slideUp();
-            $(outfitDroplist).children().remove();
+            default:
+                $(outfitDroplistContainer).slideUp();
+                $(outfitDroplist).children().remove();
+            break;
 
         }
 
