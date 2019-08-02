@@ -64,6 +64,15 @@
 
     <div style="text-align:center;margin-bottom:10px;border:1px solid;">
         <img id="product-preview" style="max-width:100%;max-height:300px;margin:auto;">
+        <script>
+            (function(){
+                const productPreview = $("img#product-preview").get(0);
+                $(productPreview).on("load", function(){
+                    window.URL.revokeObjectURL(this.src); // important!
+                    debugMode && console.log("revoked", this.src);
+                });
+            })();
+        </script>
     </div>
 
     <div style="margin-bottom:10px;">
@@ -364,12 +373,12 @@ $(viewer.contentWindow).on("load", function(){
         snapshotFileImported.dispatch(this.files);
     });
 
-    $(snapshotAddButton).on("click", function(){
-        addSnapshotBtnClicked.dispatch();
-    });
-
     $(imageRemoveButton).on("click", function(){
         removeSelectedSnapshot.dispatch();
+    });
+
+    $(snapshotAddButton).on("click", function(){
+        addSnapshotBtnClicked.dispatch();
     });
 
     $(snapshotRemoveButton).on("click", function(){
@@ -388,6 +397,127 @@ $(viewer.contentWindow).on("load", function(){
 
         debugMode && console.dir(masterSnapshot);
     });
+
+
+//  BUTTON UPLOAD.
+
+    $(snapshotUploadButton).on("click", uploadSelectedSnapshot);
+
+    function uploadSelectedSnapshot(){
+
+        if ( !navigator.onLine ) {
+            var err = "Your connection to the internet is down.";
+            debugMode && console.error(err);
+            return bootbox.dialog( errorDialogOptions(err) );
+        }
+
+        var snapshot = $(snapshotItemSelector + ".selected").get(0);
+
+        if ( !snapshot ) {
+            var err = `None selected snapshot found!`;
+            return bootbox.dialog( errorDialogOptions(err) );
+        }
+
+        if (snapshot.uploaded) {
+            var msg `Snapshot has been already uploaded.`;
+            return bootbox.dialog( successDialogOptions(msg) );
+        }
+
+        debugMode && console.dir(snapshot); 
+
+        var name = snapshot.name;
+        var type = "image/jpeg";
+        var data = snapshot.data.replace("data:image/jpeg;base64,", ""); // important!
+
+        var dialog = bootbox.dialog({
+            message: `<div class="text-center meter">`
+            + `<span style="width:100%;">Uploading...`
+            + `</span></div>`,
+            buttons: false,
+            closeButton: false,
+            className: "middle",
+        });
+
+        new Promise(function(resolve, reject){
+
+        //  Disable upload button.
+            $(snapshotUploadButton).off(); // important!
+            debugMode && console.log(`uploading ${file.name}...`);
+
+            var formdata = new FormData();
+            formdata.append("image", data);
+            formdata.append("type",  type);
+            formdata.append("name",  name);
+            formdata.append("title", name);
+
+            var xhttp = new XMLHttpRequest();
+            var clientid = "1812ad6d78faf36";  // product app Client-ID.
+            var endpoint = "https://api.imgur.com/3/image";
+            xhttp.open("POST", endpoint, true);
+            xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    var response = "";
+                    if (this.status >= 200 && this.status < 300) {
+                        response = JSON.parse(this.responseText);
+                        resolve( response ); // resolve promise.
+                    } else {
+                        var err = JSON.parse(this.responseText).data.error;
+                        console.error( err.type, err );
+                        throw err;
+                    }
+                }
+            };
+
+            xhttp.send(formdata);
+            xhttp = null;
+
+        }).then( function( response ){
+
+            var data = response.data;
+            debugMode && console.log({"data": data});
+
+            snapshot.data = data;
+            snapshot.uploaded = true;
+
+            return data;
+
+        }).then( function( data ){
+
+        //  Add to cache.
+            return caches.open("products").then(function(cache){
+                return cache.add(data.link).then(function(){
+                    return data;
+                });
+            });
+
+        }).then( function( data ){
+
+        //  Preview snapshot.
+            caches.open("products").then(function(cache){
+                cache.match(data.link).then(function(response){
+                    return response.blob();
+                }).then(function(blob){
+                    productPreviewImage.src = window.URL.createObjectURL(blob);
+                });
+            });
+
+        }).catch(function(err){
+
+            bootbox.hideAll();
+            console.error(err);
+            bootbox.dialog( errorDialogOptions(err) );
+
+        }).then(function(){
+
+            dialog.modal("hide"); // important!
+        //  Enable upload button. // important!
+            $(snapshotUploadButton).on("click", uploadSelectedSnapshot );
+            debugMode && console.log( "Snapshot upload button is enabled again." );
+
+        });
+
+    }
 
     snapshotFileImported.add(function(files){
 
@@ -588,30 +718,6 @@ $(viewer.contentWindow).on("load", function(){
         debugMode && productFormChanged.dispatch();
 
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     $(categoryDroplist).on("change", function(){
 
