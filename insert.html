@@ -446,8 +446,9 @@ $(viewer.contentWindow).on("load", function(){
         new Promise(function(resolve, reject){
 
         //  Disable upload button.
+            $(imageUploadButton).off(); // important!
             $(snapshotUploadButton).off(); // important!
-            debugMode && console.log(`uploading ${file.name}...`);
+            debugMode && console.log(`uploading ${name}...`);
 
             var formdata = new FormData();
             formdata.append("image", data);
@@ -507,6 +508,10 @@ $(viewer.contentWindow).on("load", function(){
                 });
             });
 
+        }).then( function(){
+
+            productFormChanged.dispatch(); // testing!
+
         }).catch(function(err){
 
             bootbox.hideAll();
@@ -517,8 +522,9 @@ $(viewer.contentWindow).on("load", function(){
 
             dialog.modal("hide"); // important!
         //  Enable upload button. // important!
+            $(imageUploadButton).on("click", uploadSelectedSnapshot );
             $(snapshotUploadButton).on("click", uploadSelectedSnapshot );
-            debugMode && console.log( "Snapshot upload button is enabled again." );
+            debugMode && console.log( "Upload button is enabled and ready to upload." );
 
         });
 
