@@ -470,88 +470,121 @@ $(viewer.contentWindow).on("load", function(){
             className: "middle",
         });
 
-        new Promise(function(resolve, reject){
+        caches.open("products").then(function(cache){
 
-        //  Disable upload button.
-            $(imageUploadButton).off(); // important!
-            $(snapshotUploadButton).off(); // important!
-            debugMode && console.log(`uploading ${name}...`);
+            new Promise(function(resolve, reject){
 
-            var formdata = new FormData();
-            formdata.append("image", data);
-            formdata.append("type",  type);
-            formdata.append("name",  name);
-            formdata.append("title", name);
+            //  Disable upload button.
+                $(imageUploadButton).off(); // important!
+                $(snapshotUploadButton).off(); // important!
+                debugMode && console.log(`uploading ${name}...`);
 
-            var xhttp = new XMLHttpRequest();
-            var clientid = "1812ad6d78faf36";  // product app Client-ID.
-            var endpoint = "https://api.imgur.com/3/image";
-            xhttp.open("POST", endpoint, true);
-            xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
-            xhttp.onreadystatechange = function () {
-                if (this.readyState === 4) {
-                    var response = "";
-                    if (this.status >= 200 && this.status < 300) {
-                        response = JSON.parse(this.responseText);
-                        resolve( response ); // resolve promise.
-                    } else {
-                        var err = JSON.parse(this.responseText).data.error;
-                        console.error( err.type, err );
-                        throw err;
+                var formdata = new FormData();
+                formdata.append("image", data);
+                formdata.append("type",  type);
+                formdata.append("name",  name);
+                formdata.append("title", name);
+
+                var xhttp = new XMLHttpRequest();
+                var clientid = "1812ad6d78faf36";  // product app Client-ID.
+                var endpoint = "https://api.imgur.com/3/image";
+                xhttp.open("POST", endpoint, true);
+                xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4) {
+                        var response = "";
+                        if (this.status >= 200 && this.status < 300) {
+                            response = JSON.parse(this.responseText);
+                            resolve( response ); // resolve promise.
+                        } else {
+                            var err = JSON.parse(this.responseText).data.error;
+                            console.error( err.type, err );
+                            throw err;
+                        }
                     }
-                }
-            };
+                };
 
-            xhttp.send(formdata);
-            xhttp = null;
+                xhttp.send(formdata);
+                xhttp = null;
 
-        }).then( function( response ){
+            }).then( function( response ){
 
-            var data = response.data;
-            debugMode && console.log({"data": data});
+                var data = response.data;
+                debugMode && console.log({"data": data});
 
-            snapshot.data = data;
-            snapshot.uploaded = true;
+                snapshot.data = data;
+                snapshot.uploaded = true;
 
-            return data;
+                return data;
 
-        }).then( function( data ){
+            }).then( function( data ){
 
-        //  Add to cache.
-            return caches.open("products").then(function(cache){
-                return cache.add(data.link).then(function(){
-                    return data;
+            //  Add to collection.
+
+                var entry = {};
+
+                entry._id = data.id;
+                entry.url = data.link;
+                entry.size = data.size;
+                entry.type = data.type;
+                entry.name = data.name || data.title;
+                entry.width = data.width;
+                entry.height = data.height;
+                entry.datetime = data.datetime;
+                entry.deletehash = data.deletehash;
+                entry.thumbnail = data.link.replace(data.id, data.id + "s");
+                entry.endpoint = "https://api.imgur.com/3/image/" + data.id;
+                entry.clientID = "1812ad6d78faf36";  // product app Client-ID.
+
+                debugMode && console.log({"entry":entry});
+
+            //  Add to collection.
+
+                var collection = PRODUCTS.collection("snapshots");
+
+                collection.insert(entry, function(err){
+                    if (err) throw err;
+                }).catch(function(err){
+                    console.error(err);
                 });
-            });
 
-        }).then( function( data ){
+                return data.link;
 
-        //  Preview snapshot.
-            caches.open("products").then(function(cache){
-                cache.match(data.link).then(function(response){
+            }).then( function( url ){
+
+            //  Add to cache.
+                return cache.add( url ).then(function(){
+                    return url;
+                });
+
+            }).then( function( url ){
+
+            //  Preview snapshot.
+                cache.match( url ).then(function(response){
                     return response.blob();
                 }).then(function(blob){
                     productPreviewImage.src = window.URL.createObjectURL(blob);
                 });
+
+            }).then( function(){
+
+                productFormChanged.dispatch(); // testing!
+
+            }).catch(function(err){
+
+                bootbox.hideAll();
+                console.error(err);
+                bootbox.dialog( errorDialogOptions(err) );
+
+            }).then(function(){
+
+                dialog.modal("hide"); // important!
+            //  Enable upload button. // important!
+                $(imageUploadButton).on("click", uploadSelectedSnapshot );
+                $(snapshotUploadButton).on("click", uploadSelectedSnapshot );
+                debugMode && console.log( "Upload button is enabled and ready to upload." );
+
             });
-
-        }).then( function(){
-
-            productFormChanged.dispatch(); // testing!
-
-        }).catch(function(err){
-
-            bootbox.hideAll();
-            console.error(err);
-            bootbox.dialog( errorDialogOptions(err) );
-
-        }).then(function(){
-
-            dialog.modal("hide"); // important!
-        //  Enable upload button. // important!
-            $(imageUploadButton).on("click", uploadSelectedSnapshot );
-            $(snapshotUploadButton).on("click", uploadSelectedSnapshot );
-            debugMode && console.log( "Upload button is enabled and ready to upload." );
 
         });
 
