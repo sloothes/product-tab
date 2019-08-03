@@ -675,7 +675,7 @@ $(viewer.contentWindow).on("load", function(){
 
         if (snapshot.uploaded) {
             var msg = `Snapshot has been already uploaded.`;
-            return bootbox.dialog( userNotificationDialogMessage(msg) );
+            return userNotificationDialogMessage(msg);
         }
 
         debugMode && console.dir(snapshot); 
@@ -1140,10 +1140,10 @@ $(viewer.contentWindow).on("load", function(){
                     $(saveProductButton).click();
 
                 } else if ( result == null ) {
-                    bootbox.dialog( userNotificationDialogMessage(msg) );
+                    userNotificationDialogMessage(msg);
 
                 } else if ( result.length == 0 ) {
-                    bootbox.dialog( userNotificationDialogMessage(err) );
+                    userNotificationDialogMessage(err);
 
                 } else {
 
