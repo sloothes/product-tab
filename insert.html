@@ -1262,7 +1262,6 @@ $(viewer.contentWindow).on("load", function(){
             productUUID: productUUID,
         };
 
-
         Promise.all([
 
             PRODUCTS.collection("products")
@@ -1283,6 +1282,11 @@ $(viewer.contentWindow).on("load", function(){
 
             var msg = `Product ${title} saved!`;
             userNotificationDialogMessage( msg );
+
+            debugMode && console.log({
+                "entry":entry,
+                "connector":connector,
+            });
 
         }).catch(function(err){
             debugMode && console.error(err);
