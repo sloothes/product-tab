@@ -1067,7 +1067,6 @@ $(viewer.contentWindow).on("load", function(){
 
     function resetProductForm(){
 
-        masterSnapshot = null;               // preview.
         $(productTitle).val("");             // name.
         $(productValue).val("");             // price.
         $(genderDroplist).val("");           // gender.
@@ -1076,6 +1075,10 @@ $(viewer.contentWindow).on("load", function(){
         $(snapshotItemSelector).remove();    // snapshots.
         $(productDescription).val(LoremIpsum);  // description.
         $(collectionDroplist).val("").change(); // collection.
+
+        masterSnapshot = null;               // preview.
+        productPreviewImage.src = noimage;   // preview.
+        $(productSnapshots).children().remove(); // snapshots.
 
     }
 
