@@ -560,7 +560,7 @@ $(viewer.contentWindow).on("load", function(){
 
 //  SNAPSHOTS.
 
-    var snpCount = 0;     // snapshots counter.
+    var snapCounter = 0;     // snapshots counter.
 
     $(imageImportButton).on("click", function(){
         $(imagePreviewInput).val("");
@@ -773,7 +773,7 @@ $(viewer.contentWindow).on("load", function(){
 
         for (var i = 0; i < files.length; i++ ) {
 
-            ++snpCount;    // snapshots counter.
+            ++snapCounter;    // snapshots counter.
 
             (function(){
 
@@ -884,7 +884,7 @@ $(viewer.contentWindow).on("load", function(){
     //  Direct call scene window (dont use socket).
     //  Returns a resolved promise with snapshot dataULR.
 
-        ++snpCount; // snapshot counter.
+        ++snapCounter; // snapshot counter.
 
         var cmd = "/product/crop";
         contentWindow.sceneHandler(cmd).then(function(data){
@@ -896,7 +896,7 @@ $(viewer.contentWindow).on("load", function(){
 
             var snapshot = document.createElement("li");
             snapshot.data = productPreviewImage.src = data; 
-            snapshot.name = `product snapshot ${snpCount}.jpg`;
+            snapshot.name = `product snapshot ${snapCounter}.jpg`;
             snapshot.classList.add(
                 "btn", "btn-default", "btn-white-outline", 
                 "snapshot-item", "product-snapshot-item"
