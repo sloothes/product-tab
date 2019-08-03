@@ -15,31 +15,6 @@
 </script>
 
 <script>
-
-(function(){
-
-    const VERSION = 1;
-    const NAME = "PRODUCTS";
-
-    PRODUCTS = new zango.Db( NAME, {
-        products:    true,
-        snapshots:   true,
-        connectors:  true,
-    });
-
-    PRODUCTS.open(function(err, database){
-        if (err) console.error(err);
-    }).then( function(){
-        debugMode && console.log(`Database ${PRODUCTS.name} (v${PRODUCTS.version}) opened.`);
-    }).catch(function(err){
-        console.error(err);
-    });
-
-})();
-
-</script>
-
-<script>
 /*
 (function(){
 
@@ -144,6 +119,260 @@
     }
 
 </style>
+
+<script>
+
+(function(){
+
+    const VERSION = 1;
+    const NAME = "PRODUCTS";
+
+    PRODUCTS = new zango.Db( NAME, {
+        products:    true,
+        snapshots:   true,
+        connectors:  true,
+    });
+
+    PRODUCTS.open(function(err, database){
+        if (err) console.error(err);
+    }).then( function(){
+        debugMode && console.log(`Database ${PRODUCTS.name} (v${PRODUCTS.version}) opened.`);
+    }).catch(function(err){
+        console.error(err);
+    });
+
+})();
+
+</script>
+
+<script>
+
+//  deepCopy.js
+
+    function deepCopy(obj) {
+        if (Object.prototype.toString.call(obj) === "[object Array]") {
+            var out = [], i = 0, len = obj.length;
+            for ( ; i < len; i++ ) {
+                out[i] = arguments.callee(obj[i]);
+            }
+            return out;
+        }
+        if (typeof obj === "object") {
+            var out = {}, i;
+            for ( i in obj ) {
+                out[i] = arguments.callee(obj[i]);
+            }
+            return out;
+        }
+        return obj;
+    }
+
+//  round.js  source: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round"
+
+    function round(number, precision) {
+        var shift = function (number, precision, reverseShift) {
+            if (reverseShift) {
+                precision = -precision;
+            }  
+            numArray = ("" + number).split("e");
+            return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
+        };
+        return shift(Math.round(shift(number, precision, false)), precision, true);
+    }
+
+
+</script>
+
+<script>
+
+//  const viewer = document.getElementById("viewer");
+/*
+    const NoSrc = "//:0";
+// "source: https://stackoverflow.com/questions/5775469/
+//  whats-the-valid-way-to-include-an-image-with-no-src".
+    const noimage = "/img/no-image-avaliable-200x200.png";
+    const LoremIpsum = "Sed ac metus fermentum nisi lacinia sodales. "
+    + "Nullam porta tristique justo et laoreet. Vestibulum pulvinar, "
+    + "purus a finibus commodo, quam lectus imperdiet arcu, "
+    + "vel sollicitudin augue ligula quis lorem. "
+    + "Nunc vehicula lectus nec quam interdum, vitae mattis sapien iaculis. "
+    + "Duis et dui sed lorem hendrerit sollicitudin. "
+    + "Donec ut justo tincidunt, finibus nisi ut, fringilla augue. "
+    + "Donec a nibh nec libero pellentesque semper et vel lacus. Integer quis magna quam";
+*/
+
+    function generateUUID(){
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+        .replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0;
+            var v = c == 'x'?r:r&0x3|0x8;
+            return v.toString(16);
+        }).toLocaleUpperCase();
+    };
+
+    function getProductSnapshotMetadata(id){
+    //  Returns a resolved promise with image metadata from api.imgur.com.
+        debugMode && console.log(`GET https://api.imgur.com/3/image/${id}`);
+        return new Promise(function( resolve, reject ){
+            var xhttp = new XMLHttpRequest();
+            var clientid = "1812ad6d78faf36";  // product app Client-ID.
+            var endpoint = "https://api.imgur.com/3/image/" + id;
+            xhttp.open("GET", endpoint, true);
+            xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    var response = "";
+                    if (this.status >= 200 && this.status < 300) {
+                        response = JSON.parse(this.responseText);
+                        debugMode && console.log(response.data);
+                        resolve(response.data); // resolve promise.
+                    } else {
+                        var err = JSON.parse(this.responseText).data.error;
+                        console.error( err.type, err );
+                        throw err;
+                    }
+                }
+            };
+
+            xhttp.send();
+            xhttp = null;
+        });
+    }
+
+    function uploadProductSnapshotImage(object){
+    //  Returns a resolved promise with uploaded image metadata from api.imgur.com.
+        debugMode && console.log(`uploading ${object.name}...`);
+        return new Promise(function( resolve, reject ){
+
+            var formdata = new FormData();
+            formdata.append("image", object.data);
+            formdata.append("type",  object.type);
+            formdata.append("name",  object.name);
+            formdata.append("title", object.title);
+
+            var xhttp = new XMLHttpRequest();
+            var clientid = "1812ad6d78faf36";  // product app Client-ID.
+            var endpoint = "https://api.imgur.com/3/image";
+            xhttp.open("POST", endpoint, true);
+            xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    var response = "";
+                    if (this.status >= 200 && this.status < 300) {
+                        response = JSON.parse(this.responseText);
+                        debugMode && console.log(response.data);
+                        resolve(response.data); // resolve promise.
+                    } else {
+                        var err = JSON.parse(this.responseText).data.error;
+                        console.error( err.type, err );
+                        throw err;
+                    }
+                }
+            };
+
+            xhttp.send(formdata);
+            xhttp = null;
+        });
+    }
+
+    function deleteProductSnapshotImage(deletehash){
+    //  Returns a resolved promise with success response if from api.imgur.com.
+        debugMode && console.log(`DELETE https://api.imgur.com/3/image/${deletehash}`);
+        return new Promise(function( resolve, reject ){
+            var xhttp = new XMLHttpRequest();
+            var clientid = "1812ad6d78faf36";  // product app Client-ID.
+            var endpoint = "https://api.imgur.com/3/image/" + deletehash;
+            xhttp.open("DELETE", endpoint, true);
+            xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    var response = "";
+                    if (this.status >= 200 && this.status < 300) {
+                        response = JSON.parse(this.responseText);
+                        debugMode && console.log(response);
+                        resolve(response); // resolve promise.
+                    } else {
+                        var err = JSON.parse(this.responseText).data.error;
+                        console.error( err.type, err );
+                        throw err;
+                    }
+                }
+            };
+
+            xhttp.send();
+            xhttp = null;
+        });
+    }
+
+</script>
+
+<script>
+
+    function errorDialogOptions(err){
+        return {
+            size: "small",
+            className: "middle",
+            closeButton: true,
+            title: `<div class="alert-icon icon-warning">` 
+            + `</div><h2 style="margin:auto;">Error!</h2>`,
+            message: `<div>Sorry! An error occurred.</div>`
+            + `<div>${err}</div>`,
+            buttons: {
+                cancel: {
+                    label: "Close",
+                    className: "btn-default",
+                },
+            },
+        };
+    }
+
+    function cancelDialogOptions(msg){
+        return {
+            size: "small",
+            className: "middle",
+            closeButton: true,
+            title: `<div class="alert-icon icon-warning">` 
+            + `</div><h2 style="margin:auto;">Canceled</h2>`,
+            message: `<div>${msg}</div>`,
+            buttons: {
+                cancel: {
+                    label: "Close",
+                    className: "btn-default",
+                },
+            }
+        };
+    }
+
+    function successDialogOptions(msg){
+        return {
+            size: "small",
+            className: "middle",
+            closeButton: false,
+            title: `<div class="alert-icon icon-success">`
+            + `</div><h2 style="margin:auto;">Success</h2>`,
+            message: `<div>${msg}</div>`,
+            buttons: { 
+                success: {
+                    label: "Close",
+                    className: "btn-success",
+                    callback: function(){ 
+                        bootbox.hideAll(); 
+                    }
+                },
+            }
+        };
+    }
+
+    function userNotificationDialogMessage(msg){
+        return bootbox.dialog({
+            buttons: false,
+            closeButton: true,
+            className: "middle",
+            message: `<div class="text-center">${msg}</div>`,
+        });
+    }
+
+</script>
 
 <div class="helpers-header newitem-header" style="margin-bottom:20px;">
     <input type="text" id="product-title" class="form-control text-center x-large product-title-field" placeholder="untitled product">
