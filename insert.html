@@ -327,10 +327,10 @@ $(viewer.contentWindow).on("load", function(){
 
     $(collectionDroplist).on("change", function(){
 
-        if ( this.value ) {
-            $(collectionPanel).slideDown();
-        } else {
+        if ( !this.value ) {
             $(collectionPanel).slideUp();
+        } else {
+            $(collectionPanel).slideDown();
         }
 
         collectionDroplistChanged.dispatch(this.value);
