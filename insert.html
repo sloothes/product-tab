@@ -141,6 +141,8 @@
         console.error(err);
     });
 
+    if ( store("SnapshotCount") == null ) store("SnapshotCount", 0);
+
 })();
 
 </script>
@@ -398,7 +400,7 @@
     <div style="margin-bottom:10px;">
         <input type="file" id="image-file-input" accept="image/*" class="hidden" multiple>
         <div id="image-import-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:32%;">Import</div>
-        <div id="image-upload-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:33%;">Upload</div>
+        <div id="image-upload-button" class="form-control btn btn-success btn-white-outline gradient-btn snapshot-upload-btn" style="width:33%;">Upload</div>
         <div id="image-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:32%;float:right;">Remove</div>
     </div>
 
@@ -417,7 +419,7 @@
     <div style="text-align:center;margin-bottom:10px;">
         <div id="snapshot-add-button" class="form-control btn btn-info btn-white-outline gradient-btn" style="width:fit-content;float:left;">Add</div>
         <div id="snapshot-master-button" class="form-control btn btn-primary btn-white-outline gradient-btn" style="width:fit-content;">Set main</div>
-        <div id="snapshot-upload-button" class="form-control btn btn-success btn-white-outline gradient-btn" style="width:fit-content;">Upload</div>
+        <div id="snapshot-upload-button" class="form-control btn btn-success btn-white-outline gradient-btn snapshot-upload-btn" style="width:fit-content;">Upload</div>
         <div id="snapshot-remove-button" class="form-control btn btn-danger btn-white-outline gradient-btn" style="width:fit-content;float:right;">Remove</div>
     </div>
 
@@ -667,6 +669,7 @@ $(viewer.contentWindow).on("load", function(){
     const productValue = document.getElementById("product-value");
     const productDescription = document.getElementById("product-description");
 
+
     const NoSrc = "//:0";
     const noimage = "/img/no-image-avaliable-200x200.png";
     const LoremIpsum = "Sed ac metus fermentum nisi lacinia sodales. "
@@ -679,6 +682,7 @@ $(viewer.contentWindow).on("load", function(){
     + "Donec a nibh nec libero pellentesque semper et vel lacus. Integer quis magna quam";
 
     const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
+    const snapshotUploadBtnSelector = "div.form-control.snapshot-upload-btn";
 
     const productPreviewPanel = document.getElementById("product-preview-panel");
     const productPreviewImage = $(productPreviewPanel).find("img#product-preview").get(0);
@@ -844,8 +848,6 @@ $(viewer.contentWindow).on("load", function(){
 
 //  SNAPSHOTS.
 
-    var snapCounter = 0;     // snapshots counter.
-
     $(imageImportButton).on("click", function(){
         $(imagePreviewInput).val("");
         $(imagePreviewInput).click();
@@ -897,7 +899,7 @@ $(viewer.contentWindow).on("load", function(){
         var snapshot = $(snapshotItemSelector + ".selected").get(0);
 
         if ( !snapshot ) {
-            var err = `None selected snapshot found!`;
+            var err = `There is not selected snapshot for upload!`;
             return bootbox.dialog( errorDialogOptions(err) );
         }
 
@@ -908,9 +910,34 @@ $(viewer.contentWindow).on("load", function(){
 
         debugMode && console.dir(snapshot); 
 
-        var name = snapshot.name;
-        var type = "image/jpeg";
-        var data = snapshot.data.replace("data:image/jpeg;base64,", ""); // important!
+        if (snapshot.data.startWith("data:image/png;base64,") ) {
+
+            var type = "image/png";
+            var name = `product snapshot #${store("SnapshotCount")}.png`;
+            var data =  snapshot.data.replace("data:image/png;base64,", "");   // important!
+
+        } else if (snapshot.data.startWith("data:image/gif;base64,") ) {
+
+            var type = "image/gif";
+            var name = `product snapshot #${store("SnapshotCount")}.gif`;
+            var data =  snapshot.data.replace("data:image/gif;base64,", "");   // important!
+
+        } else if (snapshot.data.startWith("data:image/jpeg;base64,") ) {
+
+            var type = "image/jpeg";
+            var name = `product snapshot #${store("SnapshotCount")}.jpg`;
+            var data =  snapshot.data.replace("data:image/jpeg;base64,", "");  // important!
+
+        } else {
+
+            var err = `Unsupported image type!<br>`
+            +  `Please replace image and try again.`;
+            return bootbox.dialog( errorDialogOptions(err) );
+
+        }
+
+
+    //  Start uploading.
 
         var dialog = bootbox.dialog({
             message: `<div class="text-center meter">`
@@ -926,8 +953,7 @@ $(viewer.contentWindow).on("load", function(){
             new Promise(function(resolve, reject){
 
             //  Disable upload button.
-                $(imageUploadButton).off(); // important!
-                $(snapshotUploadButton).off(); // important!
+                $(snapshotUploadBtnSelector).off(); // important!
                 debugMode && console.log(`uploading ${name}...`);
 
                 var formdata = new FormData();
@@ -967,6 +993,7 @@ $(viewer.contentWindow).on("load", function(){
                 snapshot.id = data.id;     // important!
                 snapshot.link = data.link; // important!
                 snapshot.uploaded = true;  // important!
+                snapshot.name = data.name; //  optional!
 
                 snapshot.clientID = "1812ad6d78faf36";// product app Client-ID.
                 snapshot.endpoint = "https://api.imgur.com/3/image/" + data.id;         // important!
@@ -1029,6 +1056,12 @@ $(viewer.contentWindow).on("load", function(){
 
             }).then( function(){
 
+            //  Snapshot counter.
+                var count = store("SnapshotCount");
+                store( "SnapshotCount",  ++count ); 
+
+            }).then( function(){
+
                 productFormChanged.dispatch(); // testing!
 
             }).catch(function(err){
@@ -1041,8 +1074,7 @@ $(viewer.contentWindow).on("load", function(){
 
                 dialog.modal("hide"); // important!
             //  Enable upload button. // important!
-                $(imageUploadButton).on("click", uploadSelectedSnapshot );
-                $(snapshotUploadButton).on("click", uploadSelectedSnapshot );
+                $(snapshotUploadBtnSelector).on("click", uploadSelectedSnapshot );
                 debugMode && console.log( `Upload button is enabled and ready to upload.` );
 
             });
@@ -1056,8 +1088,6 @@ $(viewer.contentWindow).on("load", function(){
         if ( files.length == 0 ) return;
 
         for (var i = 0; i < files.length; i++ ) {
-
-            ++snapCounter;    // snapshots counter.
 
             (function(){
 
@@ -1166,8 +1196,6 @@ $(viewer.contentWindow).on("load", function(){
     //  Direct call scene window (dont use socket).
     //  Returns a resolved promise with snapshot dataULR.
 
-        ++snapCounter; // snapshot counter.
-
         var cmd = "/product/crop";
         contentWindow.sceneHandler(cmd).then(function(data){
 
@@ -1178,11 +1206,11 @@ $(viewer.contentWindow).on("load", function(){
 
             var snapshot = document.createElement("li");
             snapshot.data = productPreviewImage.src = data; 
-            snapshot.name = `product snapshot ${snapCounter}.jpg`;
             snapshot.classList.add(
                 "btn", "btn-default", "btn-white-outline", 
                 "snapshot-item", "product-snapshot-item"
             );
+        //  snapshot.name = `product snapshot #${store("SnapshotCount")}.jpg`; // no name before upload start.
 
         //  Thumbnails.
 
