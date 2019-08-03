@@ -245,7 +245,6 @@
 
 $(viewer.contentWindow).on("load", function(){
 
-    const NoSrc = "//:0";
     const contentWindow = this;
 
 //  const viewer = document.getElementById("viewer");
@@ -261,6 +260,7 @@ $(viewer.contentWindow).on("load", function(){
     const productValue = document.getElementById("product-value");
     const productDescription = document.getElementById("product-description");
 
+    const NoSrc = "//:0";
     const noimage = "/img/no-image-avaliable-200x200.png";
     const LoremIpsum = "Sed ac metus fermentum nisi lacinia sodales. "
     + "Nullam porta tristique justo et laoreet. Vestibulum pulvinar, "
@@ -512,8 +512,14 @@ $(viewer.contentWindow).on("load", function(){
                 var data = response.data;
                 debugMode && console.log({"data": data});
 
-                snapshot.data = data;
-                snapshot.uploaded = true;
+                snapshot.data = null;
+
+                snapshot.id = data.id;
+                snapshot.uploaded = true;  // important!
+                snapshot.link = data.link; // important!
+                snapshot.thumbnail = data.link.replace(data.id, data.id + "s");
+                snapshot.clientID = "1812ad6d78faf36";  // product app Client-ID.
+                snapshot.deletehash = "https://api.imgur.com/3/image/" + data.deletehash; // important!
 
                 return data;
 
@@ -548,13 +554,16 @@ $(viewer.contentWindow).on("load", function(){
                     console.error(err);
                 });
 
-                return data.link;
+                return data;
 
-            }).then( function( url ){
+            }).then( function( data ){
 
             //  Add to cache.
-                return cache.add( url ).then(function(){
-                    return url;
+                return cache.add( data.link ).then(function(){
+                    return caches.open("thumbnails").then(function(thumbnails){
+                        return thumbnails.add( data.link.replace(data.id, data.id + "s") )
+                        .then(function(){ return data.link; });
+                    });
                 });
 
             }).then( function( url ){
@@ -735,10 +744,29 @@ $(viewer.contentWindow).on("load", function(){
             $(snapshot).on("click", function(){
 
                 $(selector).removeClass("selected");
-                $(snapshot).addClass("selected");         // this.
+                $(snapshot).addClass("selected");
 
-                selectedSnapshot = snapshot;              // this.
-                productPreviewImage.src = snapshot.data;  // this.
+                selectedSnapshot = snapshot;
+
+                if (!snapshot.uploaded && snapshot.data) {
+
+                    productPreviewImage.src = snapshot.data;
+
+                } else if (snapshot.uploaded && snapshot.link && snapshot.deletehash) {
+
+                    caches.open("products").then(function(cache){
+                        cache.match( snapshot.link ).then(function(response){
+                            return response.blob();
+                        }).then(function(blob){
+                            productPreviewImage.src = window.URL.createObjectURL(blob);
+                        });
+                    });
+
+                } else {
+
+                    productPreviewImage.src = noimage;
+
+                }
 
                 debugMode && console.dir(selectedSnapshot);
 
