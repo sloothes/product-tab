@@ -1117,13 +1117,14 @@ $(viewer.contentWindow).on("load", function(){
                 debugMode && console.log({"result":result});
 
                 if ( result == defaultValue ) {
-                    return $(saveProductButton).click();
+
+                    $(saveProductButton).click();
 
                 } else if ( result == null ) {
-                    return bootbox.dialog( userNotificationDialogMessage(msg) );
+                    bootbox.dialog( userNotificationDialogMessage(msg) );
 
                 } else if ( result.length == 0 ) {
-                    return bootbox.dialog( userNotificationDialogMessage(err) );
+                    bootbox.dialog( userNotificationDialogMessage(err) );
 
                 } else {
 
@@ -1263,6 +1264,9 @@ $(viewer.contentWindow).on("load", function(){
         }).catch(function(err){
             debugMode && console.error(err);
             bootbox.dialog( errorDialogOptions(err) );
+
+        ]).then(function(){
+
         });
 
     /*
@@ -1287,11 +1291,7 @@ $(viewer.contentWindow).on("load", function(){
         }
     */
 
-
-
-
     });
-
 
 
 });
