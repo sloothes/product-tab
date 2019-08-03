@@ -312,6 +312,56 @@ $(viewer.contentWindow).on("load", function(){
 
 </script>
 
+<script>
+
+$(viewer.contentWindow).on("load", function(){
+
+    const contentWindow = this;
+
+//  const viewer = document.getElementById("viewer");
+    const collectionPanel = document.getElementById("collection-panel");
+    const collectionDroplist = document.getElementById("product-collection");
+
+    var Signal = signals.Signal;
+//  var collectionDroplistChanged = new Signal();
+
+    $(collectionDroplist).on("change", function(){
+
+        if ( this.value ) {
+            $(collectionPanel).slideDown();
+        } else {
+            $(collectionPanel).slideUp();
+        }
+
+    });
+
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="helpers-header product-snapshots-header" style="margin-bottom:10px;">
 
     <h3>Snapshots:</h3>
