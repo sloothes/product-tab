@@ -1241,25 +1241,25 @@ $(viewer.contentWindow).on("load", function(){
         debugMode && console.log(entry);
 
     //  To connect a product with an outfit we  
-    //  use a pair of {productUUID, itemUUID}.
+    //  use a pair of [product_UUID, item_UUID].
 
-        var itemUUID = generateUUID(); // demo!
-        var productUUID = entry.uuid;
+        var item_UUID = generateUUID(); // demo!
+        var product_UUID = entry.uuid;
 
-    //  Then we use a separate collection to 
-    //  keep this pair of UUIDs. When we want 
+    //  We use a separate "connectors" collection  
+    //  to keep these pair of UUIDs. When we want 
     //  to get the item of the product, we go
-    //  to that collection with the productUUID,
-    //  we get the itemUUID, and then we search,
-    //  the item to deliver.
+    //  to that collection with the product_UUID,
+    //  we get the item_UUID, and then we search,
+    //  the item of the product to deliver.
 
         var connector = {
             _id: ObjectId(),
             demo: true,
             database: "USER",
             collection: kind,
-            itemUUID: itemUUID,
-            productUUID: productUUID,
+            item_UUID: item_UUID,
+            product_UUID: product_UUID,
         };
 
         Promise.all([
