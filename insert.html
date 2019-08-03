@@ -323,7 +323,7 @@ $(viewer.contentWindow).on("load", function(){
     const collectionDroplist = document.getElementById("product-collection");
 
     var Signal = signals.Signal;
-//  var collectionDroplistChanged = new Signal();
+    var collectionDroplistChanged = new Signal();
 
     $(collectionDroplist).on("change", function(){
 
@@ -331,6 +331,34 @@ $(viewer.contentWindow).on("load", function(){
             $(collectionPanel).slideDown();
         } else {
             $(collectionPanel).slideUp();
+        }
+
+        collectionDroplistChanged.dispatch(this.value);
+
+    });
+
+    collectionDroplistChanged.add(function(value){
+
+        if (!value) return;
+
+        switch (value) {
+
+            case "outfits":
+
+            break;
+
+            case "textures":
+
+            break;
+
+            case "materials":
+
+            break;
+
+            case "animations":
+
+            break;
+
         }
 
     });
@@ -453,6 +481,7 @@ $(viewer.contentWindow).on("load", function(){
     var snapshotFileImported = new Signal();
     var addSnapshotBtnClicked = new Signal();
     var removeSelectedSnapshot = new Signal();
+    var productSaveButtonClicked = new Signal();
     var outfitProductDroplistUpdate = new Signal();
 
     //  Every change in product form,
@@ -1031,41 +1060,28 @@ $(viewer.contentWindow).on("load", function(){
 
     });
 
-    contentWindow.localPlayer.outfit.changed.add(function(){
-    //  debugMode && console.log("counting localPlayer changed signals...");
-
-        outfitProductDroplistUpdate.dispatch();
-
-        switch (collectionDroplist.value) {
-
-            case "outfits":
-
-            break;
-
-            case "textures":
-
-            break;
-
-            case "materials":
-
-            break;
-
-            case "animations":
-
-            break;
-
-        }
-
-    });
-
-
-    var productSaveButtonClicked = new Signal();
 
     $(testProductButton).on("click", function(){
         productFormChanged.dispatch();
     });
 
-    $(saveProductButton).on("click", function(){
+    function resetProductForm(){
+
+        masterSnapshot = null;               // preview.
+        $(productTitle).val("");             // name.
+        $(productValue).val("");             // price.
+        $(genderDroplist).val("");           // gender.
+        $(outfitDroplist).val("");           // slot.
+        $(productState).val(false);          // publish.
+        $(snapshotItemSelector).remove();    // snapshots.
+        $(productDescription).val(LoremIpsum);  // description.
+        $(collectionDroplist).val("").change(); // collection.
+
+    }
+
+    $(saveProductButton).on( "click", validateProductForm );
+
+    function validateProductForm(){
 
     //  VALIDATIONS.
 
@@ -1162,7 +1178,7 @@ $(viewer.contentWindow).on("load", function(){
     //  productFormChanged.dispatch();
         productSaveButtonClicked.dispatch();
 
-    });
+    }
 
     productSaveButtonClicked.add(function(){
 
@@ -1190,6 +1206,9 @@ $(viewer.contentWindow).on("load", function(){
         });
 
         if (!snapshots.length) return;
+
+    //  Disable save button.
+        $(saveProductButton).off();  // important!
 
     //    if (kind) entry.kind = kind;
     //    if (title) entry.name = title;
@@ -1267,32 +1286,19 @@ $(viewer.contentWindow).on("load", function(){
 
         ]).then(function(){
 
+        //  Reset form.
+            resetProductForm();
+
+        //  Enable save button.
+            $(saveProductButton).on( "click", validateProductForm ); // important!
+
         });
-
-    /*
-        switch (entry.kind) {
-
-            case "outfits":
-                itemUUID = skinned.uuid;
-            break;
-
-            case "textures":
-                itemUUID = texture.uuid;
-            break;
-
-            case "materials":
-                itemUUID = material.uuid;
-            break;
-
-            case "animations":
-                itemUUID = animation.uuid;
-            break;
-
-        }
-    */
 
     });
 
+    contentWindow.localPlayer.outfit.changed.add(function(){
+        outfitProductDroplistUpdate.dispatch();
+    });
 
 });
 
