@@ -660,7 +660,7 @@ $(viewer.contentWindow).on("load", function(){
     function uploadSelectedSnapshot(){
 
         if ( !navigator.onLine ) {
-            var err = "Your connection to the internet is down.";
+            var err = `Your connection to the internet is down.`;
             debugMode && console.error(err);
             return bootbox.dialog( errorDialogOptions(err) );
         }
@@ -673,7 +673,7 @@ $(viewer.contentWindow).on("load", function(){
         }
 
         if (snapshot.uploaded) {
-            var msg = `Snapshot has been already uploaded.`;
+            var msg = `Selected snapshot has been already uploaded.`;
             return userNotificationDialogMessage(msg);
         }
 
@@ -814,7 +814,7 @@ $(viewer.contentWindow).on("load", function(){
             //  Enable upload button. // important!
                 $(imageUploadButton).on("click", uploadSelectedSnapshot );
                 $(snapshotUploadButton).on("click", uploadSelectedSnapshot );
-                debugMode && console.log( "Upload button is enabled and ready to upload." );
+                debugMode && console.log( `Upload button is enabled and ready to upload.` );
 
             });
 
