@@ -427,7 +427,7 @@
 
     <div id="product-outfit-container" style="display:none;">
 
-        <h4 class="x-large">Sex:
+        <h4 class="x-large hidden">Sex:
             <div class="product-item-textfield" style="display:inline-block;">
                 <select id="product-gender" class="form-control gender-droplist product-gender-droplist" readOnly>
                     <option value="">Select gender:</option>
@@ -1531,8 +1531,9 @@ $(viewer.contentWindow).on("load", function(){
 
     });
 
+
     contentWindow.localPlayer.outfit.changed.add(function(){
-        outfitProductDroplistUpdate.dispatch();
+        outfitProductDroplistUpdate.dispatch(); // important!
     });
 
 });
