@@ -128,9 +128,9 @@
     const NAME = "PRODUCTS";
 
     PRODUCTS = new zango.Db( NAME, {
-        products:    true,
-        snapshots:   true,
-        connectors:  true,
+        products:   true,
+        snapshots:  true,
+        multiplex:  true,
     });
 
     PRODUCTS.open(function(err, database){
@@ -1473,7 +1473,7 @@ $(viewer.contentWindow).on("load", function(){
         var item_UUID = generateUUID(); // demo!
         var product_UUID = entry.uuid;
 
-    //  We use a separate "connectors" collection  
+    //  We use a separate "multiplex" collection  
     //  to keep these pair of UUIDs. When we want 
     //  to get the item of the product, we go
     //  to that collection with the product_UUID,
@@ -1498,7 +1498,7 @@ $(viewer.contentWindow).on("load", function(){
                 console.error(err);
             }),
 
-            PRODUCTS.collection("connectors")
+            PRODUCTS.collection("multiplex")
             .insert(connector, function(err){
                 if (err) throw err;
             }).catch(function(err){
