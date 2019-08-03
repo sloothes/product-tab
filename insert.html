@@ -965,8 +965,9 @@ $(viewer.contentWindow).on("load", function(){
 
         switch (this.value) {
 
-            case "outfit":
-            case "material":
+            case "outfits":
+            case "textures":
+            case "materials":
                 outfitProductDroplistUpdate.dispatch();
                 $(outfitDroplistContainer).slideDown();
             break;
