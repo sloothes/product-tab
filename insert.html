@@ -1087,7 +1087,7 @@ $(viewer.contentWindow).on("load", function(){
 
         if ( !outfitDroplist.value ) {
 
-            var msg = "You don't have outfit selected.<br>"
+            var msg = "You don't have any outfit slot selected.<br>"
             + "Please select an outfit slot and try again.";
             return bootbox.dialog( cancelDialogOptions(msg) );
 
@@ -1112,18 +1112,23 @@ $(viewer.contentWindow).on("load", function(){
             });
 
             function callback(result){
-                var msg = `Save aborted.`;
-                var err = `Name is required. Save cancelled.`;
+                var msg = `Save canceled.`;
+                var err = `Name is required. Save canceled.`;
                 debugMode && console.log({"result":result});
 
                 if ( result == defaultValue ) {
                     return $(saveProductButton).click();
-                } else if ( result == null ) {
-                    return bootbox.dialog( cancelDialogOptions(msg) );
+
                 } else if ( result.length == 0 ) {
-                    return bootbox.dialog( errorDialogOptions(err) );
+                    return bootbox.dialog( userNotificationDialogMessage(err) );
+
+                } else if ( result == null ) {
+                    return bootbox.dialog( userNotificationDialogMessage(msg) );
+
                 } else {
-                    return bootbox.dialog( errorDialogOptions(err) );
+
+                    productTitle.value = result;
+
                 }
             }
 
