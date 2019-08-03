@@ -1113,7 +1113,8 @@ $(viewer.contentWindow).on("load", function(){
 
         if ( !productTitle.value ) {
 
-            var msg = "Please type a title for this product and try again:";
+            var msg = "Please type a title for <br>"
+                    + "this product and try again:";
             var title = `<div class="alert-icon icon-warning">`
                 + `</div><h4 style="margin:auto;">${msg}</h4>`;
             var defaultValue = "untitled product";
