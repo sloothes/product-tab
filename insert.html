@@ -23,8 +23,9 @@
     const NAME = "PRODUCTS";
 
     PRODUCTS = new zango.Db( NAME, {
-        products:   true,
-        snapshots:  true,
+        products:    true,
+        snapshots:   true,
+        connectors:  true,
     });
 
     PRODUCTS.open(function(err, database){
@@ -172,17 +173,58 @@
 
     </div>
 
-    <div id="product-category-container">
+    <div id="product-collection-container">
         <h4 class="x-large">Kind:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-category" class="form-control product-category-droplist" readOnly>
-                    <option value="">Select category:</option>
-                    <option value="outfit">outfit</option>
-                    <option value="material">material</option>
-                    <option value="animation">animation</option>
+                <select id="product-collection" class="form-control product-collection-droplist" readOnly>
+                    <option value="">Select collection:</option>
+                    <option value="outfits">outfit</option>
+                    <option value="textures">texture</option>
+                    <option value="materials">material</option>
+                    <option value="animations">animation</option>
                 </select>
             </div>
         </h4>
+    </div>
+
+</div>
+
+<div id="collection-panel" class="tab-content">
+
+    <div id="collection-items-panel" class="well">
+
+        <hr />
+
+        <h4>Choose item:
+            <div id="counter" class="pull-right small" style="margin-top:4px;color:#ddd;">
+                <span id="from">zero</span>
+                to <span id="upto">zero</span>
+                of <span id="count">none</span>
+            </div>
+        </h4>
+
+        <div id="collection-pager" class="pager">
+            <div style="margin:10px 0px 10px;height:35px;">
+                <li class="btn btn-primary get-prev-btn pull-left">&#9668;</li>
+                <div class="pager-buttons-holder" style="display:inline;">
+                    <a class="btn btn-default page-btn">1</a>
+                    <a class="btn btn-default page-btn">2</a>
+                    <a class="btn btn-default page-btn">3</a>
+                    <a class="btn btn-default page-btn">4</a>
+                </div>
+                <li class="btn btn-primary get-next-btn pull-right">&#9658;</li>
+            </div>
+
+            <div id="documents-display" class="well"></div>
+
+            <div style="margin:10px 0px 10px;height:35px;">
+                <li class="btn btn-primary btn-white-outline first-page-btn pull-left" style="margin-right:5px;">First</li>
+                <li class="btn btn-primary btn-white-outline get-prev-group-btn pull-left">&#9668;&#9668;</li>
+                <li class="btn btn-primary btn-white-outline last-page-btn pull-right" style="margin-left:5px;">Last</li>
+                <li class="btn btn-primary btn-white-outline get-next-group-btn pull-right">&#9658;&#9658;</li>
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -295,10 +337,10 @@ $(viewer.contentWindow).on("load", function(){
 //  const viewer = document.getElementById("viewer");
     const genderDroplist = document.getElementById("product-gender");
     const outfitDroplist = document.getElementById("product-outfit");
-    const categoryDroplist = document.getElementById("product-category");
+    const collectionDroplist = document.getElementById("product-collection");
 
     const outfitDroplistContainer = document.getElementById("product-outfit-container");
-    const categoryDroplistContainer = document.getElementById("product-category-container");
+    const collectionDroplistContainer = document.getElementById("product-collection-container");
 
     const productTitle = document.getElementById("product-title");
     const productState = document.getElementById("product-state");
@@ -355,7 +397,7 @@ $(viewer.contentWindow).on("load", function(){
     productFormChanged.add(function(){
 
         var gender = contentWindow.localPlayer.outfit.getGender();
-        var kind = $(categoryDroplist).val();            // kind.
+        var kind = $(collectionDroplist).val();            // kind.
         var title = $(productTitle).val();               // name.
         var value = round( $(productValue).val(), 2);    // price.
         var outfit = $(outfitDroplist).val();            // slot.
@@ -410,7 +452,7 @@ $(viewer.contentWindow).on("load", function(){
         productFormChanged.dispatch();
     });
 
-    $(categoryDroplist).on("change", function(){
+    $(collectionDroplist).on("change", function(){
         if ( !this.value ) return;
         productFormChanged.dispatch();
     });
@@ -882,7 +924,7 @@ $(viewer.contentWindow).on("load", function(){
 
     });
 
-    $(categoryDroplist).on("change", function(){
+    $(collectionDroplist).on("change", function(){
 
         switch (this.value) {
 
@@ -937,21 +979,21 @@ $(viewer.contentWindow).on("load", function(){
 
         outfitProductDroplistUpdate.dispatch();
 
-        switch (categoryDroplist.value) {
+        switch (collectionDroplist.value) {
 
-            case "outfit":
-
-            break;
-
-            case "material":
+            case "outfits":
 
             break;
 
-            case "texture":
+            case "textures":
 
             break;
 
-            case "animation":
+            case "materials":
+
+            break;
+
+            case "animations":
 
             break;
 
@@ -978,7 +1020,7 @@ $(viewer.contentWindow).on("load", function(){
 
         }
 
-        if ( !categoryDroplist.value ) {
+        if ( !collectionDroplist.value ) {
 
             var msg = "You don't have kind selected.<br>"
             + "Please select a product kind and try again.";
@@ -1061,7 +1103,7 @@ $(viewer.contentWindow).on("load", function(){
 
     productSaveButtonClicked.add(function(){
 
-        var kind = $(categoryDroplist).val();            // kind.
+        var kind = $(collectionDroplist).val();          // kind.
         var title = $(productTitle).val();               // name.
         var value = round( $(productValue).val(), 2);    // price.
         var gender = contentWindow.localPlayer.outfit.getGender();
@@ -1097,6 +1139,7 @@ $(viewer.contentWindow).on("load", function(){
 
         var entry = {
             _id: ObjectId(),
+            demo: true,
             kind: kind,
             name: title,
             slot: outfit,
@@ -1114,25 +1157,68 @@ $(viewer.contentWindow).on("load", function(){
     //  To connect a product with an outfit we  
     //  use a pair of {productUUID, itemUUID}.
 
-        var itemUUID = generateUUID(); // DEMO.
+        var itemUUID = generateUUID(); // demo!
         var productUUID = entry.uuid;
+
+    //  Then we use a separate collection to 
+    //  keep this pair of UUIDs. When we want 
+    //  to get the item of the product, we go
+    //  to that collection with the productUUID,
+    //  we get the itemUUID, and then we search,
+    //  the item to deliver.
+
+        var connector = {
+            _id: ObjectId(),
+            demo: true,
+            database: "USER",
+            collection: kind,
+            itemUUID: itemUUID,
+            productUUID: productUUID,
+        };
+
+
+        Promise.all([
+
+            PRODUCTS.collection("products")
+            .insert(entry, function(err){
+                if (err) throw err;
+            }).catch(function(err){
+                console.error(err);
+            }),
+
+            PRODUCTS.collection("connectors")
+            .insert(connector, function(err){
+                if (err) throw err;
+            }).catch(function(err){
+                console.error(err);
+            }),
+
+        ]).then(function(){
+
+            var msg = `Product ${title} saved!`;
+            bootbox.dialog( successDialogOptions(msg) );
+
+        }).catch(function(err){
+            debugMode && console.error(err);
+            bootbox.dialog( errorDialogOptions(err) );
+        });
 
     /*
         switch (entry.kind) {
 
-            case "outfit":
+            case "outfits":
                 itemUUID = skinned.uuid;
             break;
 
-            case "texture":
+            case "textures":
                 itemUUID = texture.uuid;
             break;
 
-            case "material":
+            case "materials":
                 itemUUID = material.uuid;
             break;
 
-            case "animation":
+            case "animations":
                 itemUUID = animation.uuid;
             break;
 
