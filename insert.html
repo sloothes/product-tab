@@ -1119,11 +1119,11 @@ $(viewer.contentWindow).on("load", function(){
                 if ( result == defaultValue ) {
                     return $(saveProductButton).click();
 
-                } else if ( result.length == 0 ) {
-                    return bootbox.dialog( userNotificationDialogMessage(err) );
-
                 } else if ( result == null ) {
                     return bootbox.dialog( userNotificationDialogMessage(msg) );
+
+                } else if ( result.length == 0 ) {
+                    return bootbox.dialog( userNotificationDialogMessage(err) );
 
                 } else {
 
