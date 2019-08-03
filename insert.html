@@ -675,7 +675,7 @@ $(viewer.contentWindow).on("load", function(){
 
         if (snapshot.uploaded) {
             var msg = `Snapshot has been already uploaded.`;
-            return bootbox.dialog( successDialogOptions(msg) );
+            return bootbox.dialog( userNotificationDialogMessage(msg) );
         }
 
         debugMode && console.dir(snapshot); 
@@ -1202,6 +1202,7 @@ $(viewer.contentWindow).on("load", function(){
 
     //  SNAPSHOTS.
 
+        var uploads = [];
         var snapshots = [];                      // [ imgur ids ].
 
         $(snapshotItemSelector).toArray().forEach(function(item){
