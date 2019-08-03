@@ -515,6 +515,49 @@ $(viewer.contentWindow).on("load", function(){
     });
 
 
+    $(collectionDroplist).on("change", function(){
+
+        if (this.value) {
+            outfitProductDroplistUpdate.dispatch();
+            $(outfitDroplistContainer).slideDown();
+        } else {
+            $(outfitDroplistContainer).slideUp();
+            $(outfitDroplist).children().remove();
+        }
+
+    });
+
+    outfitProductDroplistUpdate.add( function (){
+
+        $(outfitDroplist).children().remove();
+
+        var option = document.createElement("option");
+        option.value = "";  option.innerText = "Select slot:";
+        $(outfitDroplist).append(option);
+
+        if ( !contentWindow ) return;
+        if ( !contentWindow.localPlayer ) return;
+        if ( !contentWindow.localPlayer.outfit ) return;
+
+        var slots = [];
+        var gender = contentWindow.localPlayer.outfit.getGender();
+        for (var key in contentWindow[ gender ] ) {
+            if ( contentWindow[ gender ][ key ].parent ) slots.push( key ); // filter (danger!).
+        }
+
+        debugMode && console.log({"slots":slots});
+
+        slots.forEach(function(slot){
+            if (slot == "gender") return;
+            var option = document.createElement("option");
+            option.value = option.innerText = slot;
+            $(outfitDroplist).append(option);
+        });
+
+        $(outfitDroplist).val("");
+
+    });
+
 //  SNAPSHOTS.
 
     var snpCount = 0;     // snapshots counter.
@@ -958,57 +1001,6 @@ $(viewer.contentWindow).on("load", function(){
         debugMode && console.log(snapshotFiles);
         debugMode && console.dir(masterSnapshot);
         debugMode && productFormChanged.dispatch();
-
-    });
-
-    $(collectionDroplist).on("change", function(){
-
-        switch (this.value) {
-
-            case "outfits":
-            case "textures":
-            case "materials":
-                outfitProductDroplistUpdate.dispatch();
-                $(outfitDroplistContainer).slideDown();
-            break;
-
-            default:
-                $(outfitDroplistContainer).slideUp();
-                $(outfitDroplist).children().remove();
-            break;
-
-        }
-
-    });
-
-    outfitProductDroplistUpdate.add( function (){
-
-        $(outfitDroplist).children().remove();
-
-        var option = document.createElement("option");
-        option.value = "";  option.innerText = "Select slot:";
-        $(outfitDroplist).append(option);
-
-        if ( !contentWindow ) return;
-        if ( !contentWindow.localPlayer ) return;
-        if ( !contentWindow.localPlayer.outfit ) return;
-
-        var slots = [];
-        var gender = contentWindow.localPlayer.outfit.getGender();
-        for (var key in contentWindow[ gender ] ) {
-            if ( contentWindow[ gender ][ key ].parent ) slots.push( key ); // filter (danger!).
-        }
-
-        debugMode && console.log({"slots":slots});
-
-        slots.forEach(function(slot){
-            if (slot == "gender") return;
-            var option = document.createElement("option");
-            option.value = option.innerText = slot;
-            $(outfitDroplist).append(option);
-        });
-
-        $(outfitDroplist).val("");
 
     });
 
