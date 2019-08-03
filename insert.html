@@ -273,7 +273,7 @@ $(viewer.contentWindow).on("load", function(){
     const contentWindow = this;
 
 //  const viewer = document.getElementById("viewer");
-    const genderDroplist = $("#product-gender-droplist").get(0);
+    const genderDroplist = $("#product-gender").get(0);
 
     var Signal = signals.Signal;
     var genderDroplistChanged = new Signal();
@@ -1069,9 +1069,9 @@ $(viewer.contentWindow).on("load", function(){
 
         $(productTitle).val("");             // name.
         $(productValue).val("");             // price.
+        $(productState).val("");             // publish.
         $(genderDroplist).val("");           // gender.
         $(outfitDroplist).val("");           // slot.
-        $(productState).val(false);          // publish.
         $(snapshotItemSelector).remove();    // snapshots.
         $(productDescription).val(LoremIpsum);  // description.
         $(collectionDroplist).val("").change(); // collection.
