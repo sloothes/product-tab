@@ -1358,8 +1358,8 @@ $(viewer.contentWindow).on("load", function(){
             });
 
             function callback(result){
-                var msg = `Save canceled.`;
-                var err = `Name is required. Save canceled.`;
+                var msg = `Save canceled by the user.`;
+                var err = `Name is required. Save aborted.`;
                 debugMode && console.log({"result":result});
 
                 if ( result == defaultValue ) {
