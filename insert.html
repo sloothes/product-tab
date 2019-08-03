@@ -910,19 +910,19 @@ $(viewer.contentWindow).on("load", function(){
 
         debugMode && console.dir(snapshot); 
 
-        if (snapshot.data.startWith("data:image/png;base64,") ) {
+        if (snapshot.data.startsWith("data:image/png;base64,") ) {
 
             var type = "image/png";
             var name = `product snapshot #${store("SnapshotCount")}.png`;
             var data =  snapshot.data.replace("data:image/png;base64,", "");   // important!
 
-        } else if (snapshot.data.startWith("data:image/gif;base64,") ) {
+        } else if (snapshot.data.startsWith("data:image/gif;base64,") ) {
 
             var type = "image/gif";
             var name = `product snapshot #${store("SnapshotCount")}.gif`;
             var data =  snapshot.data.replace("data:image/gif;base64,", "");   // important!
 
-        } else if (snapshot.data.startWith("data:image/jpeg;base64,") ) {
+        } else if (snapshot.data.startsWith("data:image/jpeg;base64,") ) {
 
             var type = "image/jpeg";
             var name = `product snapshot #${store("SnapshotCount")}.jpg`;
