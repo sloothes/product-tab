@@ -187,6 +187,51 @@
 
 </div>
 
+<script>
+
+$(viewer.contentWindow).on("load", function(){
+
+    const contentWindow = this;
+
+//  const viewer = document.getElementById("viewer");
+    const genderDroplist = $("#product-gender-droplist").get(0);
+
+    var Signal = signals.Signal;
+    var genderDroplistChanged = new Signal();
+
+    $(genderDroplist).on("change", function(){
+
+        if ( !this.value ) {
+
+        //  Overwrite gender value.
+            this.value = contentWindow.localPlayer.outfit.getGender();
+
+        }
+
+    //  Null values NOT allowed.
+
+        if ( !this.value ) return;
+
+        genderDroplistChanged.dispatch( this.value );
+
+    });
+
+    genderDroplistChanged.add(function(value){
+
+    //  Null values NOT allowed.
+
+        if ( !value ) return;
+
+        var data = "/gender/" + value;
+        contentWindow.localPlayerHandler(data);
+
+        store( "Sex", data );
+
+    });
+
+});
+
+</script>
 
 <div class="helpers-header product-snapshots-header" style="margin-bottom:10px;">
 
@@ -915,9 +960,191 @@ $(viewer.contentWindow).on("load", function(){
     });
 
 
+    var productSaveButtonClicked = new Signal();
+
     $(testProductButton).on("click", function(){
         productFormChanged.dispatch();
     });
+
+    $(saveProductButton).on("click", function(){
+
+    //  VALIDATIONS.
+
+        if ( !contentWindow.localPlayer.outfit.getGender() ) {
+
+            var msg = "You don't have gender selected.<br>"
+            + "Please select a product gender and try again.";
+            return bootbox.dialog( cancelDialogOptions(msg) );
+
+        }
+
+        if ( !categoryDroplist.value ) {
+
+            var msg = "You don't have kind selected.<br>"
+            + "Please select a product kind and try again.";
+            return bootbox.dialog( cancelDialogOptions(msg) );
+
+        }
+
+        if ( !outfitDroplist.value ) {
+
+            var msg = "You don't have outfit selected.<br>"
+            + "Please select an outfit slot and try again.";
+            return bootbox.dialog( cancelDialogOptions(msg) );
+
+        }
+
+        if ( !productTitle.value ) {
+
+            var msg = "Please type a name for this product:";
+            var title = `<div class="alert-icon icon-warning">`
+                + `</div><h4 style="margin:auto;">${msg}</h4>`;
+            var defaultValue = "untitled product";
+
+            return bootbox.prompt({
+
+                title: title,
+                size: "small",
+                className: "middle",
+                value: defaultValue,
+                closeButton: false,
+                callback: callback,
+
+            });
+
+            function callback(result){
+                var msg = `Save aborted.`;
+                var err = `Name is required. Save cancelled.`;
+                debugMode && console.log({"result":result});
+
+                if ( result == defaultValue ) {
+                    return $(saveProductButton).click();
+                } else if ( result == null ) {
+                    return bootbox.dialog( cancelDialogOptions(msg) );
+                } else if ( result.length == 0 ) {
+                    return bootbox.dialog( errorDialogOptions(err) );
+                } else {
+                    return bootbox.dialog( errorDialogOptions(err) );
+                }
+            }
+
+        }
+
+    //  SNAPSHOTS.
+
+        var snapshots = [];                      // [ imgur ids ].
+
+        $(snapshotItemSelector).toArray().forEach(function(item){
+            if (item.id) snapshots.push( item.id );
+        });
+
+        if ( snapshots.length == 0 ) {
+
+            var msg = "You don't have any snapshots uploaded.<br>"
+            + "Please upload at least one snapshot and try again.";
+            return bootbox.dialog( cancelDialogOptions(msg) );
+
+        }
+
+        if ( !masterSnapshot ) {
+
+            var msg = "You don't have define any snapshot as main.<br>"
+            + "Please define a snapshot as main preview and try again.";
+            return bootbox.dialog( cancelDialogOptions(msg) );
+
+        }
+
+    //  productFormChanged.dispatch();
+        productSaveButtonClicked.dispatch();
+
+    });
+
+    productSaveButtonClicked.add(function(){
+
+        var kind = $(categoryDroplist).val();            // kind.
+        var title = $(productTitle).val();               // name.
+        var value = round( $(productValue).val(), 2);    // price.
+        var gender = contentWindow.localPlayer.outfit.getGender();
+        var outfit = $(outfitDroplist).val();            // slot.
+        var preview = masterSnapshot.id;                 // imgur id.
+        var publish = Boolean( $(productState).val() );  // boolean.
+        var description = $(productDescription).val();   // text.
+
+        if (!kind) return;
+        if (!title) return;
+        if (!gender) return;
+        if (!outfit) return;
+        if (!preview) return;
+
+    //  SNAPSHOTS.
+
+        var snapshots = [];                      // [ imgur ids ].
+
+        $(snapshotItemSelector).toArray().forEach(function(item){
+            if (item.id) snapshots.push( item.id );
+        });
+
+        if (!snapshots.length) return;
+
+    //    if (kind) entry.kind = kind;
+    //    if (title) entry.name = title;
+    //    if (value) entry.price = value;
+    //    if (outfit) entry.slot = outfit;    // slot.
+    //    if (gender) entry.gender = gender;
+    //    if (preview) entry.preview = preview;
+    //    if (snapshots.length) entry.snapshots = snapshots;
+    //    entry.publish = publish;
+
+        var entry = {
+            _id: ObjectId(),
+            kind: kind,
+            name: title,
+            slot: outfit,
+            gender: gender,
+            preview: preview,
+            publish: publish,
+            snapshots: snapshots,
+            uuid: generateUUID(),
+        };
+
+        if (description) entry.description = description;
+
+        debugMode && console.log(entry);
+
+    //  To connect a product with an outfit we  
+    //  use a pair of {productUUID, itemUUID}.
+
+        var itemUUID = generateUUID(); // DEMO.
+        var productUUID = entry.uuid;
+
+    /*
+        switch (entry.kind) {
+
+            case "outfit":
+                itemUUID = skinned.uuid;
+            break;
+
+            case "texture":
+                itemUUID = texture.uuid;
+            break;
+
+            case "material":
+                itemUUID = material.uuid;
+            break;
+
+            case "animation":
+                itemUUID = animation.uuid;
+            break;
+
+        }
+    */
+
+
+
+
+    });
+
+
 
 });
 
