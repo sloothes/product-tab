@@ -107,6 +107,43 @@
         background-repeat:no-repeat;
     }
 
+/*  collection pager  */
+
+    .helpers-header h3 { cursor:pointer; }
+
+    .collection-item {
+        padding: 4px 15px;
+        text-align: left;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+    .selected {
+        color:#fff;
+        background-color:#73b8f3;
+    }
+
+    #collection-items-panel {
+        max-width:475px;
+    /*  max-height:710px; */
+        color:#fff;
+        border:none;
+        padding:0px;
+        background-color:#fff0;
+    }
+
+    #documents-display {
+        height:170px;
+        overflow:auto;
+        background:none;
+        border-radius:8px;
+    }
+
+    .page-btn {
+        max-width:45px;
+        padding:6px 10px;
+    }
+
 </style>
 
 <div class="helpers-header newitem-header" style="margin-bottom:20px;">
@@ -1196,7 +1233,7 @@ $(viewer.contentWindow).on("load", function(){
         ]).then(function(){
 
             var msg = `Product ${title} saved!`;
-            bootbox.dialog( successDialogOptions(msg) );
+            userNotificationDialogMessage( msg );
 
         }).catch(function(err){
             debugMode && console.error(err);
