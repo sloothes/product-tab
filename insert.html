@@ -517,10 +517,10 @@
         <hr />
 
         <h4>Choose item:
-            <div id="counter" class="pull-right small" style="margin-top:4px;color:#ddd;">
-                <span id="from">zero</span>
-                to <span id="upto">zero</span>
-                of <span id="count">none</span>
+            <div class="counter" class="pull-right small" style="margin-top:4px;color:#ddd;">
+                <span class="from">zero</span>
+                to <span class="upto">zero</span>
+                of <span class="count">none</span>
             </div>
         </h4>
 
@@ -605,8 +605,78 @@ $(viewer.contentWindow).on("load", function(){
 //  const viewer = document.getElementById("viewer");
     const collectionPanel = document.getElementById("collection-panel");
     const collectionDroplist = document.getElementById("product-collection");
+    const collectionItemsPanel = document.getElementById("collection-items-panel");
+
+    const counter             = $(collectionItemsPanel).find(".counter").get(0);
+    const pageSelector        = "#collection-pager .page-btn";
+
+    const pager               = document.getElementById("collection-pager");
+    const firstPageBtn        = $(pager).find(".first-page-btn").get(0);
+    const lastPageBtn         = $(pager).find(".last-page-btn").get(0);
+    const prevPageBtn         = $(pager).find(".get-prev-btn").get(0);
+    const nextPageBtn         = $(pager).find(".get-next-btn").get(0);
+    const prevGroupBtn        = $(pager).find(".get-prev-group-btn").get(0);
+    const nextGroupBtn        = $(pager).find(".get-next-group-btn").get(0);
+    const pagebuttons         = $(pager).find(".page-btn");
+    const pageslength         = $(pager).find(".page-btn").length;
+    const displayObjects      = $(pager).find("#documents-display").get(0);
+
+    var timeout;
+    var interval;
+    var selectors;
+    var delay = 200;
+
+    const limit = 10;
+
+    var max = 0;
+    var skip = 0;
+    var lastpage = 0;
+    var currentpage = 0;
+    var currentindex = 0;
+
+    function reset(){
+
+        max = 0;
+        skip = 0;
+        lastpage = 0;
+        currentpage = 0;
+        currentindex = 0;
+
+    }
+
+    function count(){
+        var k = skip;
+        return collection.find(selectors)
+            .skip(skip).forEach( 
+            function(doc){ ++k; }, 
+            function(err){ if (err) throw err; }
+        ).catch(function(err){
+            console.error(err);
+        }).then(function(){
+            return k;
+        });
+    }
+
+    function init(){
+
+    //  Page buttons numbering.
+        pagebuttons.each(function(i){
+            pagebuttons[i].skip = limit * i;
+            $(pagebuttons[i]).text( i + 1 );
+        });
+
+    //  Current button setup.
+        pagebuttons.removeClass("btn-primary");
+        var currentButton = pagebuttons.get(0);
+        $(currentButton).addClass("btn-primary");
+
+    //  Clear listed objects.
+        $(displayObjects).children().remove();
+
+    }
 
     var Signal = signals.Signal;
+    var collectionItemSelected = new Signal();
     var collectionDroplistChanged = new Signal();
 
     $(collectionDroplist).on("change", function(){
@@ -625,27 +695,61 @@ $(viewer.contentWindow).on("load", function(){
 
         if (!value) return;
 
-        switch (value) {
+        var collection = db.collection(value);
 
-            case "outfits":
+        reset(); init();
 
-            break;
+        count().then(function(k){
+            max = k; debugMode && console.log("max:", max);
+        });
 
-            case "textures":
+    //  function get_items(){
+        collection.find(selectors).skip(skip)
+        .limit(limit).toArray(function(err){
+            if (err) throw err;
+        }).then(function(docs){
 
-            break;
+            $(displayObjects).children().remove();
+            debugMode && console.log({"docs":docs});
 
-            case "materials":
+            $(collectionItemsPanel).find(".from").text(skip + 1); 
+            $(collectionItemsPanel).find(".upto").text(skip + docs.length);
+            $(collectionItemsPanel).find(".count").text(skip + docs.length);
 
-            break;
+            docs.forEach(function(doc){
 
-            case "animations":
+                var element = document.createElement("div");
+                element.innerText = element.title = doc.name;
+                element.id = doc._id; element.classList.add("collection-item");
 
-            break;
+                $(element).on("click", function(){
+                    clearTimeout(this.interval);
+                    this.interval = setTimeout( function(){
+                        $(".collection-item").removeClass("selected");
+                        $(element).addClass("selected");
+                        collectionItemSelected.dispatch(doc);
+                    }, msec );
+                });
 
-        }
+                $(displayObjects).append( element );
+
+            });
+
+        }).catch(function(err){
+            console.error(err);
+        });
+    //  }
 
     });
+
+    collectionItemSelected.add(function(){});
+
+
+
+
+
+
+
 
 });
 
@@ -1608,3 +1712,44 @@ $(viewer.contentWindow).on("load", function(){
 </script>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+/*
+    switch (value) {
+
+        case "outfits":
+            var collection = db.collection(value);
+            break;
+
+        case "textures":
+            var collection = db.collection(value);
+            break;
+
+        case "materials":
+            var collection = db.collection(value);
+            break;
+
+        case "animations":
+            var collection = db.collection(value);
+            break;
+
+    }
+*/
+
+</script>
