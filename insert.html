@@ -807,8 +807,9 @@ $(viewer.contentWindow).on("load", function(){
 
     collectionItemSelected.add(function(data){
         var selector = ".collection-item.selected";
-        debugMode && console.log( $(selector) );
-        debugMode && console.log({"data":data});
+        debugMode && console.log({
+            "data":data, "selected":$(selector),
+        });
     });
 
     function pagerClicked(){
