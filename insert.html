@@ -793,18 +793,18 @@ $(viewer.contentWindow).on("load", function(){
                 if (slot) selectors[ slot ] = {$exists:true}; // important!
             break;
 
-            case "textures":
-                selectors = null; // {};
-            break;
-
             case "materials":
                 selectors = {};
                 if (slot) selectors["meta.slot"] = slot;
                 if (gender) selectors["meta.gender"] = gender;
             break;
 
+            case "textures":
+                selectors = null; // or {};
+            break;
+
             case "animations":
-                selectors = null; // {};
+                selectors = null; // or {};
             break;
 
         }
@@ -823,7 +823,7 @@ $(viewer.contentWindow).on("load", function(){
             $(counter).find(".count").text(max);
         });
 
-    //  get_items().
+    //  get_items();
 
         collection.find(selectors).skip(skip)
         .limit(limit).toArray(function(err){
@@ -864,6 +864,18 @@ $(viewer.contentWindow).on("load", function(){
         });
 
     });
+
+//  Pager.
+
+//  For performance we count items only when we ask last page 
+//  or we change droplist selectors. Not need to count on backward.
+
+//  const firstPageBtn = $(pager).find(".first-page-btn").get(0);
+//  const lastPageBtn  = $(pager).find(".last-page-btn").get(0);
+//  const prevPageBtn  = $(pager).find(".get-prev-btn").get(0);
+//  const nextPageBtn  = $(pager).find(".get-next-btn").get(0);
+//  const prevGroupBtn = $(pager).find(".get-prev-group-btn").get(0);
+//  const nextGroupBtn = $(pager).find(".get-next-group-btn").get(0);
 
     function pagerClicked(){
 
@@ -928,18 +940,6 @@ $(viewer.contentWindow).on("load", function(){
 
     }
 
-//  Pager.
-
-//  For performance we count items only when we ask last page 
-//  or we change droplist selectors. Not need to count on backward.
-
-//  const firstPageBtn = $(pager).find(".first-page-btn").get(0);
-//  const lastPageBtn  = $(pager).find(".last-page-btn").get(0);
-//  const prevPageBtn  = $(pager).find(".get-prev-btn").get(0);
-//  const nextPageBtn  = $(pager).find(".get-next-btn").get(0);
-//  const prevGroupBtn = $(pager).find(".get-prev-group-btn").get(0);
-//  const nextGroupBtn = $(pager).find(".get-next-group-btn").get(0);
-
 //  Page button.
 
     $(pageSelector).on("click", function(){
@@ -986,7 +986,8 @@ $(viewer.contentWindow).on("load", function(){
 
         pagerClicked();
 
-    //  Update count. optional!
+    //  Update count. (optional)
+
         count().then(function(k){
             max = k; debugMode && console.log("max:", max);
         });
