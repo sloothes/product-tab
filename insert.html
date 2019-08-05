@@ -96,6 +96,11 @@
     }
 */
     .collection-item {
+        outline:0;
+        border:none;
+        box-shadow:none;
+        background:none;
+        overflow:hidden;
         padding: 4px 15px;
         text-align: left;
         vertical-align: middle;
@@ -775,13 +780,13 @@ $(viewer.contentWindow).on("load", function(){
                 var element = document.createElement("input");
                 element.id = doc._id;
                 element.value = element.title = doc.name;
-                element.type = "text"; element.readonly = true; 
+                element.type = "text"; element.readOnly = true; 
                 element.classList.add("collection-item");
 
                 //element.style.cssText = "outline:0;background:none;border:none;box-shadow:none;cursor:context-menu;overflow:hidden;text-overflow:ellipsis;";
 
                 //var element = document.createElement("input");
-                //element.type = "text"; element.readonly = true;
+                //element.type = "text"; element.readOnly = true;
                 //element.value = element.title = doc.name;
                 //element.id = doc._id; element.classList.add("collection-item");
 
