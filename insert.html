@@ -730,7 +730,7 @@ $(viewer.contentWindow).on("load", function(){
                         $(".collection-item").removeClass("selected");
                         $(element).addClass("selected");
                         collectionItemSelected.dispatch(doc);
-                    }, msec );
+                    }, delay );
                 });
 
                 $(displayObjects).append( element );
