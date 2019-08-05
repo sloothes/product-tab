@@ -419,18 +419,19 @@
 
     <div style="text-align:center;margin-bottom:10px;border:1px solid;">
         <img id="product-preview" style="max-width:100%;max-height:300px;margin:auto;">
-        <script>
-            (function(){
-                const productPreview = $("img#product-preview").get(0);
-                $(productPreview).on("load", function(){
-                    if ( this.src.startsWith("blob:") ) {
-                        window.URL.revokeObjectURL(this.src); // important!
-                        debugMode && console.log("revoked", this.src);
-                    }
-                });
-            })();
-        </script>
     </div>
+
+    <script>
+        (function(){
+            const productPreview = $("img#product-preview").get(0);
+            $(productPreview).on("load", function(){
+                if ( this.src.startsWith("blob:") ) {
+                    window.URL.revokeObjectURL(this.src); // important!
+                    debugMode && console.log("revoked", this.src);
+                }
+            });
+        })();
+    </script>
 
     <div style="margin-bottom:10px;">
         <input type="file" id="image-file-input" accept="image/*" class="hidden" multiple>
@@ -517,7 +518,7 @@
         <hr />
 
         <h4>Choose item:
-            <div class="counter" class="pull-right small" style="margin-top:4px;color:#ddd;">
+            <div class="counter small pull-right" style="margin-top:4px;color:#ddd;">
                 <span class="from">zero</span>
                 to <span class="upto">zero</span>
                 of <span class="count">none</span>
