@@ -747,7 +747,9 @@ $(viewer.contentWindow).on("load", function(){
 
     });
 
-    collectionItemSelected.add(function(){});
+    collectionItemSelected.add(function(data){
+        debugMode && console.log({"data":data});
+    });
 
 
 
