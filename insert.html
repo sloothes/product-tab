@@ -704,6 +704,8 @@ $(viewer.contentWindow).on("load", function(){
 
         count().then(function(k){
             max = k; debugMode && console.log("max:", max);
+        }).then(function(){
+            $(collectionItemsPanel).find(".count").text(max);
         });
 
     //  function get_items(){
@@ -717,7 +719,7 @@ $(viewer.contentWindow).on("load", function(){
 
             $(collectionItemsPanel).find(".from").text(skip + 1); 
             $(collectionItemsPanel).find(".upto").text(skip + docs.length);
-            $(collectionItemsPanel).find(".count").text(skip + docs.length);
+        //  $(collectionItemsPanel).find(".count").text(skip + docs.length);
 
             docs.forEach(function(doc){
 
