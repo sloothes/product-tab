@@ -778,9 +778,9 @@ $(viewer.contentWindow).on("load", function(){
             docs.forEach(function(doc){
 
                 var element = document.createElement("input");
-                element.id = doc._id;
                 element.value = element.title = doc.name;
-                element.type = "text"; element.readOnly = true; 
+                element.readOnly = true;    // important!
+                element.id = doc._id; element.type = "text"; 
                 element.classList.add("collection-item");
 
                 //element.style.cssText = "outline:0;background:none;border:none;box-shadow:none;cursor:context-menu;overflow:hidden;text-overflow:ellipsis;";
