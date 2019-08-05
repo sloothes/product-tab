@@ -484,7 +484,7 @@
 
         <h4 class="x-large hidden">Sex:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-gender" class="form-control gender-droplist product-gender-droplist" readOnly>
+                <select id="product-gender" class="form-control product-droplist product-gender-droplist gender-droplist" readOnly>
                     <option value="">Select gender:</option>
                     <option value="male">male</option>
                     <option value="female">female</option>
@@ -494,7 +494,7 @@
 
         <h4 class="x-large">Slot:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-outfit" class="form-control slot-droplist product-outfit-droplist" readOnly>
+                <select id="product-outfit" class="form-control product-droplist product-outfit-droplist slot-droplist" readOnly>
                     <option value="">Select slot:</option>
                     <option value="body">body</option>
                     <option value="eyes">eyes</option>
@@ -515,7 +515,7 @@
     <div id="product-collection-container">
         <h4 class="x-large">Kind:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-collection" class="form-control product-collection-droplist" readOnly>
+                <select id="product-collection" class="form-control product-droplist product-collection-droplist" readOnly>
                     <option value="">Select collection:</option>
                     <option value="outfits">outfit</option>
                     <option value="textures">texture</option>
@@ -629,10 +629,10 @@ $(viewer.contentWindow).on("load", function(){
     const collectionDroplist = document.getElementById("product-collection");
     const collectionItemsPanel = document.getElementById("collection-items-panel");
 
-    const counter             = $(collectionItemsPanel).find(".counter").get(0);
-    const pageSelector        = "#collection-pager .page-btn";
+    const pageSelector = "#collection-pager .page-btn";
 
     const pager               = document.getElementById("collection-pager");
+    const counter             = $(collectionItemsPanel).find(".counter").get(0);
     const firstPageBtn        = $(pager).find(".first-page-btn").get(0);
     const lastPageBtn         = $(pager).find(".last-page-btn").get(0);
     const prevPageBtn         = $(pager).find(".get-prev-btn").get(0);
@@ -697,22 +697,6 @@ $(viewer.contentWindow).on("load", function(){
 
     }
 
-    var Signal = signals.Signal;
-    var collectionItemSelected = new Signal();
-    var collectionDroplistChanged = new Signal();
-
-    $(collectionDroplist).on("change", function(){
-
-        if ( !this.value ) {
-            $(collectionPanel).slideUp();
-        } else {
-            $(collectionPanel).slideDown();
-        }
-
-        collectionDroplistChanged.dispatch(this.value);
-
-    });
-
     function get_items(){
         collection.find(selectors).skip(skip)
         .limit(limit).toArray(function(err){
@@ -749,18 +733,56 @@ $(viewer.contentWindow).on("load", function(){
 
     }
 
-    collectionDroplistChanged.add(function(value){
+    var Signal = signals.Signal;
+//  var outfitDroplistChanged = new Signal();
+    var collectionItemSelected = new Signal();
+    var collectionDroplistChanged = new Signal();
 
-        if (!value) {
+    collectionItemSelected.add(function(data){
+        var selector = ".collection-item.selected";
+        debugMode && console.log({
+            "data":data, "selected":$(selector),
+        });
+    });
+
+    const droplistSelector = ".product-droplist";
+    $(droplistSelector).on("change", function(){
+        if ( !collectionDroplist.value ) {
+            $(collectionPanel).slideUp();
+        } else {
+            $(collectionPanel).slideDown();
+        }
+    });
+
+    $(outfitDroplist).on("change", function(){
+        collectionDroplistChanged.dispatch();
+    });
+
+    $(collectionDroplist).on("change", function(){
+        collectionDroplistChanged.dispatch();
+    });
+
+    collectionDroplistChanged.add(function(){
+
+        var value = collectionDroplist.value;
+
+        if ( !value ) {
             selectors = undefined;
             collection = undefined;
             return;
         }
 
-        collection = db.collection(value);
+        if ( db.collection( value ) == undefined ) {
+            selectors = undefined;
+            throw `Collection "${value}" couldn't be found in ${db.name} database`;
+            return;
+        }
 
         selectors = {};   // important!
-        var slot= outfitDroplist.value;
+
+        collection = db.collection( value );
+
+        var slot = outfitDroplist.value;
         var gender = contentWindow.localPlayer.outfit.getGender();
 
         switch (value) {
@@ -841,13 +863,6 @@ $(viewer.contentWindow).on("load", function(){
             console.error(err);
         });
 
-    });
-
-    collectionItemSelected.add(function(data){
-        var selector = ".collection-item.selected";
-        debugMode && console.log({
-            "data":data, "selected":$(selector),
-        });
     });
 
     function pagerClicked(){
@@ -2076,4 +2091,57 @@ $(viewer.contentWindow).on("load", function(){
     }
 */
 
+/*
+    outfitDroplistChanged.add(function(value){
+
+    //  if (!value) {;}
+
+        if (!collectionDroplist.value) {
+            selectors = undefined;
+            collection = undefined;
+            return;
+        }
+
+        var name = collectionDroplist.value;
+        collection = db.collection( name );
+
+        if (!collection) {
+            selectors = undefined; return;
+        }
+
+        selectors = {};  // important!
+
+        var slot = value;
+        var gender = contentWindow.localPlayer.outfit.getGender();
+
+        switch ( name ) {
+
+            case "outfits":
+                selectors = {};
+                if (gender) selectors["gender"] = gender;
+                if (slot) selectors[ slot ] = {$exists:true}; // important!
+            break;
+
+            case "textures":
+                selectors = null; // {};
+            break;
+
+            case "materials":
+                selectors = {};
+                if (slot) selectors["meta.slot"] = slot;
+                if (gender) selectors["meta.gender"] = gender;
+            break;
+
+            case "animations":
+                selectors = null; // {};
+            break;
+
+        }
+
+        debugMode && console.log({"selectors":selectors});
+
+        // ... //
+
+    });
+*/
 </script>
