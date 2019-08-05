@@ -599,6 +599,8 @@ $(viewer.contentWindow).on("load", function(){
 <script>
 
 $(viewer.contentWindow).on("load", function(){
+    
+    var collection;
 
     const contentWindow = this;
 
@@ -695,7 +697,7 @@ $(viewer.contentWindow).on("load", function(){
 
         if (!value) return;
 
-        var collection = db.collection(value);
+        collection = db.collection(value);
 
         reset(); init();
 
