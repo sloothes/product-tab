@@ -1440,6 +1440,8 @@ $(viewer.contentWindow).on("load", function(){
 
     productSaveButtonClicked.add(function(){
 
+        var owner = user.nickname;
+
         var kind = $(collectionDroplist).val();          // kind.
         var title = $(productTitle).val();               // name.
         var value = round( $(productValue).val(), 2);    // price.
@@ -1485,6 +1487,7 @@ $(viewer.contentWindow).on("load", function(){
             name: title,
             slot: outfit,
             price: value,
+            owner: owner,
             gender: gender,
             preview: preview,
             publish: publish,
