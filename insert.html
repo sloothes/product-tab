@@ -722,9 +722,11 @@ $(viewer.contentWindow).on("load", function(){
 
             docs.forEach(function(doc){
 
-                var element = document.createElement("div");
-                element.innerText = element.title = doc.name;
-                element.id = doc._id; element.classList.add("collection-item");
+                var element = document.createElement("input");
+                element.value = element.title = doc.name;
+                element.readOnly = true;    // important!
+                element.id = doc._id; element.type = "text"; 
+                element.classList.add("collection-item");
 
                 $(element).on("click", function(){
                     clearTimeout(this.interval);
@@ -781,13 +783,6 @@ $(viewer.contentWindow).on("load", function(){
                 element.readOnly = true;    // important!
                 element.id = doc._id; element.type = "text"; 
                 element.classList.add("collection-item");
-
-                //element.style.cssText = "outline:0;background:none;border:none;box-shadow:none;cursor:context-menu;overflow:hidden;text-overflow:ellipsis;";
-
-                //var element = document.createElement("input");
-                //element.type = "text"; element.readOnly = true;
-                //element.value = element.title = doc.name;
-                //element.id = doc._id; element.classList.add("collection-item");
 
                 $(element).on("click", function(){
                     clearTimeout(this.interval);
