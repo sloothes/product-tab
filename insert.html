@@ -623,6 +623,8 @@ $(viewer.contentWindow).on("load", function(){
     const contentWindow = this;
 
 //  const viewer = document.getElementById("viewer");
+    const genderDroplist = document.getElementById("product-gender");
+    const outfitDroplist = document.getElementById("product-outfit");
     const collectionPanel = document.getElementById("collection-panel");
     const collectionDroplist = document.getElementById("product-collection");
     const collectionItemsPanel = document.getElementById("collection-items-panel");
@@ -749,9 +751,45 @@ $(viewer.contentWindow).on("load", function(){
 
     collectionDroplistChanged.add(function(value){
 
-        if (!value) return;
+        if (!value) {
+            selectors = undefined;
+            collection = undefined;
+            return;
+        }
 
         collection = db.collection(value);
+
+        selectors = {};   // important!
+        var slot= outfitDroplist.value;
+        var gender = contentWindow.outfit.getGender();
+
+        switch (value) {
+
+            case "outfits":
+                selectors = {};
+                if (slot) selectors[ "$exists" ] = slot;
+                if (gender) selectors["gender"] = gender;
+            break;
+
+            case "textures":
+                selectors = null; // {};
+            break;
+
+            case "materials":
+                selectors = {};
+                if (slot) selectors["meta.slot"] = slot;
+                if (gender) selectors["meta.gender"] = gender;
+            break;
+
+            case "animations":
+                selectors = null; // {};
+            break;
+
+        }
+
+        debugMode && console.log({"selectors":selectors});
+
+    //  Reset.
 
         reset(); init();
 
