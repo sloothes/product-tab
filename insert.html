@@ -4,7 +4,7 @@
         var component_ID = {
             type: "tab",
             beta: true,
-            version: 1.0,
+            version: 1.1,
             kind: "component",
             name: "insert.html",
             path: "/product-tab/insert.html",
@@ -251,6 +251,41 @@
             formdata.append("type",  object.type);
             formdata.append("name",  object.name);
             formdata.append("title", object.title);
+
+            var xhttp = new XMLHttpRequest();
+            var clientid = "1812ad6d78faf36";  // product app Client-ID.
+            var endpoint = "https://api.imgur.com/3/image";
+            xhttp.open("POST", endpoint, true);
+            xhttp.setRequestHeader("Authorization", "Client-ID " + clientid);
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    var response = "";
+                    if (this.status >= 200 && this.status < 300) {
+                        response = JSON.parse(this.responseText);
+                        debugMode && console.log(response.data);
+                        resolve(response.data); // resolve promise.
+                    } else {
+                        var err = JSON.parse(this.responseText).data.error;
+                        console.error( err.type, err );
+                        throw err;
+                    }
+                }
+            };
+
+            xhttp.send(formdata);
+            xhttp = null;
+        });
+    }
+
+    function uploadProductSnapshotFile(file){
+    //  Returns a resolved promise with record data from imgur.com.
+        debugMode && console.log(`uploading ${file.name}...`);
+        return new Promise(function( resolve, reject ){
+
+            var formdata = new FormData();
+            formdata.append("image", file);
+            formdata.append("type",  file.type);
+            formdata.append("name",  file.name);
 
             var xhttp = new XMLHttpRequest();
             var clientid = "1812ad6d78faf36";  // product app Client-ID.
