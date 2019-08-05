@@ -767,8 +767,8 @@ $(viewer.contentWindow).on("load", function(){
 
             case "outfits":
                 selectors = {};
-                if (slot) selectors[ slot ] = {$exists:true};
                 if (gender) selectors["gender"] = gender;
+                if (slot) selectors[ slot ] = {$exists:true}; // important!
             break;
 
             case "textures":
