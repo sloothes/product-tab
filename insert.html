@@ -486,7 +486,7 @@
 
         <h4 class="x-large hidden">Sex:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-gender" class="form-control product-droplist product-gender-droplist gender-droplist" readOnly>
+                <select id="product-gender" class="form-control selector-droplist product-gender-droplist gender-droplist" readOnly>
                     <option value="">Select gender:</option>
                     <option value="male">male</option>
                     <option value="female">female</option>
@@ -496,7 +496,7 @@
 
         <h4 class="x-large">Slot:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-outfit" class="form-control product-droplist product-outfit-droplist slot-droplist" readOnly>
+                <select id="product-outfit" class="form-control selector-droplist product-outfit-droplist slot-droplist" readOnly>
                     <option value="">Select slot:</option>
                     <option value="body">body</option>
                     <option value="eyes">eyes</option>
@@ -517,7 +517,7 @@
     <div id="product-collection-container">
         <h4 class="x-large">Kind:
             <div class="product-item-textfield" style="display:inline-block;">
-                <select id="product-collection" class="form-control product-droplist product-collection-droplist" readOnly>
+                <select id="product-collection" class="form-control selector-droplist collection-droplist product-collection-droplist" readOnly>
                     <option value="">Select collection:</option>
                     <option value="outfits">outfit</option>
                     <option value="textures">texture</option>
@@ -658,6 +658,11 @@ $(viewer.contentWindow).on("load", function(){
     var currentpage = 0;
     var currentindex = 0;
 
+    var Signal = signals.Signal;
+//  var outfitDroplistChanged = new Signal();
+    var collectionItemSelected = new Signal();
+    var collectionDroplistChanged = new Signal();
+
     function reset(){
 
         max = 0;
@@ -735,19 +740,8 @@ $(viewer.contentWindow).on("load", function(){
 
     }
 
-    var Signal = signals.Signal;
-//  var outfitDroplistChanged = new Signal();
-    var collectionItemSelected = new Signal();
-    var collectionDroplistChanged = new Signal();
+    const droplistSelector = ".selector-droplist";
 
-    collectionItemSelected.add(function(data){
-        var selector = ".collection-item.selected";
-        debugMode && console.log({
-            "data":data, "selected":$(selector),
-        });
-    });
-
-    const droplistSelector = ".product-droplist";
     $(droplistSelector).on("change", function(){
         if ( !collectionDroplist.value ) {
             $(collectionPanel).slideUp();
@@ -774,7 +768,7 @@ $(viewer.contentWindow).on("load", function(){
             return;
         }
 
-        if ( db.collection( value ) == undefined ) {
+        if ( !db.collection( value ) ) {
             selectors = undefined;
             throw `Collection "${value}" couldn't be found in ${db.name} database`;
             return;
@@ -866,6 +860,51 @@ $(viewer.contentWindow).on("load", function(){
         });
 
     });
+
+    collectionItemSelected.add(function(json){
+        var selector = ".collection-item.selected";
+        debugMode && console.log({
+            "json":json, "selected":$(selector),
+        });
+    });
+
+    collectionItemSelected.add(function(json){
+
+        if ( collectionDroplist.value != "materials") return;
+
+        if ( !json ) throw "Material json data is undefined!";
+        if ( !json.meta ) throw "Material meta data is undefined!";
+        if ( !json.meta.slot ) throw "Material meta slot is undefined!";
+        if ( !json.meta.gender ) throw "Material meta gender is undefined!";
+
+        if ( !contentWindow.localPlayer.outfit.getGender(json.meta.gender) )
+            throw "Material meta gender does not match with current gender!";
+        if ( !contentWindow.localPlayer.outfit[json.meta.slot] )
+            throw "Material meta slot does not exist in current outfit slots";
+
+        var data = {};
+        data.slot = json.meta.slot;
+        data.gender = json.meta.gender;
+        data.material = json;
+
+        contentWindow.localPlayerApplyMaterial(data);
+
+    });
+
+    collectionItemSelected.add(function(json){
+
+        if ( collectionDroplist.value != "outfits") return;
+
+
+
+
+
+
+
+
+
+    });
+
 
 //  Pager.
 
