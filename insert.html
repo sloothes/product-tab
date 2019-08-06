@@ -717,7 +717,9 @@ $(viewer.contentWindow).on("load", function(){
 
                 var element = document.createElement("input");
                 element.value = element.title = doc.name;
+            //  element.data = doc;         // important!
                 element.readOnly = true;    // important!
+                element.uuid = doc.uuid;    // important! (TODO: encapsulate)
                 element.id = doc._id; element.type = "text"; 
                 element.classList.add("collection-item");
 
@@ -842,8 +844,29 @@ $(viewer.contentWindow).on("load", function(){
                 var element = document.createElement("input");
                 element.value = element.title = doc.name;
                 element.readOnly = true;    // important!
+                element.uuid = doc.uuid;    // important!
                 element.id = doc._id; element.type = "text"; 
                 element.classList.add("collection-item");
+
+                // Element "click" event has encapsulated the doc
+                // data and so can dispacth the "doc" on "click".
+                // But how do we extract the doc.uuid from them?
+                //  element.addEventListener("multiplex", function(){
+                    // We can add a task here when we dispatch a custom
+                    // "multiplex" event to the element, to insert in
+                    // "multiplex" collection a "connector" record like: 
+                        //   var connector = {
+                        //       _id: ObjectId(),
+                        //       database: "USER",
+                        //       collection: collectionDroplist.value,
+                        //       item_UUID: doc.uuid,
+                        //       product_UUID: product_UUID,
+                        //   };
+                        //  PRODUCT.collection("multiplex").insert(connector);
+                //  });
+                // Then we can trigger this custom event handler 
+                // when is needed with the codeline:
+                //  element.dispatchEvent(new Event("multiplex"));
 
                 $(element).on("click", function(){
                     clearTimeout(this.interval);
@@ -903,9 +926,8 @@ $(viewer.contentWindow).on("load", function(){
             contentWindow.localPlayer.outfit.fromJSON( json );
 
             return;
-        }
 
-        if ( outfitDroplist.value ) {
+        } else if ( outfitDroplist.value ) {
 
         //  Apply this slot to outfit...
 
@@ -1182,6 +1204,8 @@ $(viewer.contentWindow).on("load", function(){
 <script>
 
 $(viewer.contentWindow).on("load", function(){
+
+    var user = { username: "onHouse" }; // important! demo - TODO.
 
     const contentWindow = this;
 
@@ -1938,6 +1962,51 @@ $(viewer.contentWindow).on("load", function(){
 
         }
 
+        if ( !user || !user.username ) {
+
+            var msg = "Please type an owner for <br>"
+                    + "this product and try again:";
+
+            var title = `<div class="alert-icon icon-warning">`
+                + `</div><h4 style="margin:auto;">${msg}</h4>`;
+            var defaultValue = "your username";
+
+            return bootbox.prompt({
+
+                title: title,
+                size: "small",
+                className: "middle",
+                value: defaultValue,
+                closeButton: false,
+                callback: callback,
+
+            });
+
+            function callback(result){
+                var msg = `Save canceled by the user.`;
+                var err = `Username is required. Save aborted.`;
+                debugMode && console.log({"result":result});
+
+                if ( result == defaultValue ) {
+
+                    $(saveProductButton).click();
+
+                } else if ( result == null ) {
+                    userNotificationDialogMessage(msg);
+
+                } else if ( result.length == 0 ) {
+                    userNotificationDialogMessage(err);
+
+                } else {
+
+                    if ( !user ) user = {};
+                    user.username = result;
+
+                }
+            }
+
+        };
+
     //  SNAPSHOTS.
 
         var snapshots = [];                      // [ imgur ids ].
@@ -1969,11 +2038,11 @@ $(viewer.contentWindow).on("load", function(){
 
     productSaveButtonClicked.add(function(){
 
-        var owner = user.nickname;
+    //  var owner = user;
 
         var kind = $(collectionDroplist).val();          // kind.
         var title = $(productTitle).val();               // name.
-        var value = round( $(productValue).val(), 2);    // price.
+        var value = round( productValue.value, 2) || null;  // price.
         var gender = contentWindow.localPlayer.outfit.getGender();
         var outfit = $(outfitDroplist).val();            // slot.
         var preview = masterSnapshot.id;                 // imgur id.
@@ -2016,7 +2085,7 @@ $(viewer.contentWindow).on("load", function(){
             name: title,
             slot: outfit,
             price: value,
-            owner: owner,
+            owner: user,
             gender: gender,
             preview: preview,
             publish: publish,
@@ -2031,7 +2100,10 @@ $(viewer.contentWindow).on("load", function(){
     //  To connect a product with an outfit we  
     //  use a pair of [product_UUID, item_UUID].
 
-        var item_UUID = generateUUID(); // demo!
+    //  var item_UUID = generateUUID(); // demo!
+        var selector = ".collection-item.selected";
+        var selected = $(selector).get(0);
+        var item_UUID = selected.uuid;
         var product_UUID = entry.uuid;
 
     //  We use a separate "multiplex" collection  
@@ -2043,7 +2115,6 @@ $(viewer.contentWindow).on("load", function(){
 
         var connector = {
             _id: ObjectId(),
-            demo: true,
             database: "USER",
             collection: kind,
             item_UUID: item_UUID,
