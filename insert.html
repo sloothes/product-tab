@@ -895,7 +895,19 @@ $(viewer.contentWindow).on("load", function(){
 
         if ( collectionDroplist.value != "outfits") return;
 
-        contentWindow.localPlayer.outfit.fromJSON( json );
+        if ( !outfitDroplist.value ) {
+
+            contentWindow.localPlayer.outfit.fromJSON( json );
+
+            return;
+        }
+
+        if ( outfitDroplist.value ) {
+
+        //  Apply this slot to outfit...
+
+            return;
+        }
 
     });
 
@@ -1230,6 +1242,23 @@ $(viewer.contentWindow).on("load", function(){
     var productSaveButtonClicked = new Signal();
     var outfitProductDroplistUpdate = new Signal();
 
+    function resetProductForm(){
+
+        $(productTitle).val("");             // name.
+        $(productValue).val("");             // price.
+        $(productState).val("");             // publish.
+        $(genderDroplist).val("");           // gender.
+        $(outfitDroplist).val("");           // slot.
+        $(snapshotItemSelector).remove();    // snapshots.
+        $(productDescription).val(LoremIpsum);  // description.
+        $(collectionDroplist).val("").change(); // collection.
+
+        masterSnapshot = null;               // preview.
+        productPreviewImage.src = noimage;   // preview.
+        $(productSnapshots).children().remove(); // snapshots.
+
+    }
+
     //  Every change in product form,
     //  creates an fresh "entry" on-fly.
 
@@ -1277,7 +1306,7 @@ $(viewer.contentWindow).on("load", function(){
     //  to connect the product with the outfit and
     //  deliver the data to the customer.
 
-        //  debugMode && console.log(entry);
+        debugMode && console.log(entry);
 
     });
 
@@ -1833,23 +1862,6 @@ $(viewer.contentWindow).on("load", function(){
         productFormChanged.dispatch();
     });
 
-    function resetProductForm(){
-
-        $(productTitle).val("");             // name.
-        $(productValue).val("");             // price.
-        $(productState).val("");             // publish.
-        $(genderDroplist).val("");           // gender.
-        $(outfitDroplist).val("");           // slot.
-        $(snapshotItemSelector).remove();    // snapshots.
-        $(productDescription).val(LoremIpsum);  // description.
-        $(collectionDroplist).val("").change(); // collection.
-
-        masterSnapshot = null;               // preview.
-        productPreviewImage.src = noimage;   // preview.
-        $(productSnapshots).children().remove(); // snapshots.
-
-    }
-
     $(saveProductButton).on( "click", validateProductForm );
 
     function validateProductForm(){
@@ -2104,6 +2116,25 @@ $(viewer.contentWindow).on("load", function(){
 
 
 <script>
+
+/*
+    function resetProductForm(){
+
+        $(productTitle).val("");             // name.
+        $(productValue).val("");             // price.
+        $(productState).val("");             // publish.
+        $(genderDroplist).val("");           // gender.
+        $(outfitDroplist).val("");           // slot.
+        $(snapshotItemSelector).remove();    // snapshots.
+        $(productDescription).val(LoremIpsum);  // description.
+        $(collectionDroplist).val("").change(); // collection.
+
+        masterSnapshot = null;               // preview.
+        productPreviewImage.src = noimage;   // preview.
+        $(productSnapshots).children().remove(); // snapshots.
+
+    }
+*/
 
 /*
     switch (value) {
