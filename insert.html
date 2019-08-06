@@ -832,6 +832,9 @@ $(viewer.contentWindow).on("load", function(){
             if ( docs.length > 0 ) {
                 $(counter).find(".from").text(skip + 1); 
                 $(counter).find(".upto").text(skip + docs.length);
+            } else {
+                $(counter).find(".from").text(skip); 
+                $(counter).find(".upto").text(skip);
             }
 
             docs.forEach(function(doc){
