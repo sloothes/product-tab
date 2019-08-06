@@ -1913,9 +1913,9 @@ $(viewer.contentWindow).on("load", function(){
 
         if ( !outfitDroplist.value ) {
 
-            var msg = "You don't have any outfit slot selected.<br>"
-                    + "Please select an outfit slot and try again.";
-            return bootbox.dialog( cancelDialogOptions(msg) );
+            var msg = "You don't have any outfit slot selected.<br>";
+            //      + "Please select an outfit slot and try again.";
+            bootbox.dialog( cancelDialogOptions(msg) ); // not required.
 
         }
 
@@ -2038,7 +2038,7 @@ $(viewer.contentWindow).on("load", function(){
 
     productSaveButtonClicked.add(function(){
 
-    //  var owner = user;
+        var owner = user.username;
 
         var kind = $(collectionDroplist).val();          // kind.
         var title = $(productTitle).val();               // name.
@@ -2049,11 +2049,12 @@ $(viewer.contentWindow).on("load", function(){
         var publish = Boolean( $(productState).val() );  // boolean.
         var description = $(productDescription).val();   // text.
 
-        if (!kind) return;
-        if (!title) return;
-        if (!gender) return;
-        if (!outfit) return;
-        if (!preview) return;
+        if (!kind) return;    // required.
+        if (!title) return;   // required.
+        if (!owner) return;   // required.
+        if (!gender) return;  // required.
+    //  if (!outfit) return;  // not require.
+        if (!preview) return; // required.
 
     //  SNAPSHOTS.
 
@@ -2069,31 +2070,43 @@ $(viewer.contentWindow).on("load", function(){
     //  Disable save button.
         $(saveProductButton).off();  // important!
 
-    //    if (kind) entry.kind = kind;
-    //    if (title) entry.name = title;
-    //    if (value) entry.price = value;
-    //    if (outfit) entry.slot = outfit;    // slot.
-    //    if (gender) entry.gender = gender;
-    //    if (preview) entry.preview = preview;
-    //    if (snapshots.length) entry.snapshots = snapshots;
-    //    entry.publish = publish;
+        //  var entry = {
+        //      _id: ObjectId(),
+        //      demo: true,
+        //      kind: kind,
+        //      name: title,
+        //      slot: outfit,
+        //      price: value,
+        //      owner: owner,
+        //      gender: gender,
+        //      preview: preview,
+        //      publish: publish,
+        //      snapshots: snapshots,
+        //      uuid: generateUUID(),
+        //  };
 
-        var entry = {
-            _id: ObjectId(),
-            demo: true,
-            kind: kind,
-            name: title,
-            slot: outfit,
-            price: value,
-            owner: user,
-            gender: gender,
-            preview: preview,
-            publish: publish,
-            snapshots: snapshots,
-            uuid: generateUUID(),
-        };
+        //  if (kind) entry.kind = kind;
+        //  if (title) entry.name = title;
+        //  if (value) entry.price = value;
+        //  if (outfit) entry.slot = outfit;    // slot.
+        //  if (gender) entry.gender = gender;
+        //  if (preview) entry.preview = preview;
+        //  if (snapshots.length) entry.snapshots = snapshots;
+        //  entry.publish = publish;
 
+        var entry = {};
+        entry.kind = kind;
+        entry.name = title;
+        entry.owner = owner;
+        entry.gender = gender;
+        entry.preview = preview;
+        entry.publish = publish;
+        entry.snapshots = snapshots;
+        entry.price = value || null;
+        if (outfit) entry.slot = outfit; // important!
         if (description) entry.description = description;
+        entry._id = ObjectId();
+        entry.uuid = generateUUID();
 
         debugMode && console.log(entry);
 
