@@ -1292,12 +1292,14 @@ $(viewer.contentWindow).on("load", function(){
     productFormChanged.add(function(){
 
         var gender = contentWindow.localPlayer.outfit.getGender();
-        var kind = $(collectionDroplist).val();            // kind.
+        var kind = $(collectionDroplist).val();          // collection.
         var title = $(productTitle).val();               // name.
         var value = round( $(productValue).val(), 2);    // price.
         var outfit = $(outfitDroplist).val();            // slot.
         var publish = Boolean( $(productState).val() );  // boolean.
         var description = $(productDescription).val();   // text.
+
+        var owner = user;
 
     //  Set main snapshot (preview).
         var previewSelector = snapshotItemSelector + ".preview";
@@ -1309,7 +1311,7 @@ $(viewer.contentWindow).on("load", function(){
         var preview = $(previewSelector).get(0);
         //  debugMode && console.dir( preview );
 
-        var slength = $(snapshotItemSelector).length;
+        var length = $(snapshotItemSelector).length;
         //  debugMode && console.log( "snapshots:", $(snapshotItemSelector) );
 
         var entry = {
@@ -1324,7 +1326,8 @@ $(viewer.contentWindow).on("load", function(){
         if (outfit) entry.outfit = outfit;
         if (preview) entry.preview = preview;
         if (description) entry.description = description;
-        if (slength) entry.snapshots = $(snapshotItemSelector).toArray(); // [elements].
+        if (length) entry.snapshots = $(snapshotItemSelector).toArray(); // [elements].
+        if (owner) entry.owner = user.username;
 
         entry.publish = publish;
 
@@ -1915,8 +1918,8 @@ $(viewer.contentWindow).on("load", function(){
 
             var msg = "You don't have any outfit slot selected.<br>";
             //      + "Please select an outfit slot and try again.";
-            bootbox.dialog( cancelDialogOptions(msg) ); // not required.
-
+            //  bootbox.dialog( cancelDialogOptions(msg) );
+            userNotificationDialogMessage( msg );   // not required.
         }
 
         if ( !productTitle.value ) {
