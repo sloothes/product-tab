@@ -1926,7 +1926,7 @@ $(viewer.contentWindow).on("load", function(){
 
         if ( !collectionDroplist.value ) {
 
-            var msg = "You don't have any kind selected.<br>"
+            var msg = "You have none kind selected.<br>"
             + "Please select a product kind and try again.";
             return bootbox.dialog( cancelDialogOptions(msg) );
 
@@ -2020,12 +2020,14 @@ $(viewer.contentWindow).on("load", function(){
 
         };
 
+    /*
         if ( !outfitDroplist.value ) {
             var msg = "You don't have any outfit slot selected.<br>";
             //      + "Please select an outfit slot and try again.";
             //  bootbox.dialog( cancelDialogOptions(msg) );
             userNotificationDialogMessage( msg );   // not required.
         }
+    */
 
     //  SNAPSHOTS.
 
