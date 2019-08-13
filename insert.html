@@ -2140,9 +2140,11 @@ $(viewer.contentWindow).on("load", function(){
     //  To connect a product with an outfit we  
     //  use a pair of [product_UUID, item_UUID].
 
-    //  var item_UUID = generateUUID(); // demo!
         var selector = ".collection-item.selected";
         var selected = $(selector).get(0);
+
+        if ( !selected ) throw "There is none item selected!";
+
         var item_UUID = selected.uuid;
         var product_UUID = entry.uuid;
 
