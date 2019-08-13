@@ -4,7 +4,7 @@
         var component_ID = {
             type: "tab",
             beta: true,
-            version: 1.2,
+            version: 1.3,
             kind: "component",
             name: "insert.html",
             path: "/product-tab/insert.html",
@@ -1211,9 +1211,13 @@ $(viewer.contentWindow).on("load", function(){
 
 $(viewer.contentWindow).on("load", function(){
 
-    var user = { username: "onHouse" }; // important! demo - TODO.
-
     const contentWindow = this;
+
+    var user;
+    if (contentWindow.socket && contentWindow.socket.authToken) {
+        user = contentWindow.socket.authToken;
+        debugMode && console.log({"user":user});
+    }
 
 //  const viewer = document.getElementById("viewer");
     const genderDroplist = document.getElementById("product-gender");
@@ -1311,7 +1315,7 @@ $(viewer.contentWindow).on("load", function(){
         var publish = Boolean( $(productState).val() );  // boolean.
         var description = $(productDescription).val();   // text.
 
-        var owner = user;
+        var owner = contentWindow.socket.authToken; // important!
 
     //  Set main snapshot (preview).
         var previewSelector = snapshotItemSelector + ".preview";
@@ -1339,7 +1343,9 @@ $(viewer.contentWindow).on("load", function(){
         if (preview) entry.preview = preview;
         if (description) entry.description = description;
         if (length) entry.snapshots = $(snapshotItemSelector).toArray(); // [elements].
-        if (owner) entry.owner = user.username;
+        if (owner) entry.owner = owner.objectId;
+        if (owner) entry.designer = owner.username;
+
 
         entry.publish = publish;
 
@@ -2053,8 +2059,7 @@ $(viewer.contentWindow).on("load", function(){
 
     productSaveButtonClicked.add(function(){
 
-        var owner = user.username;
-
+        var owner = contentWindow.socket.authToken; // important!
         var kind = $(collectionDroplist).val();          // kind.
         var title = $(productTitle).val();               // name.
         var value = round( productValue.value, 2) || null;  // price.
@@ -2092,10 +2097,11 @@ $(viewer.contentWindow).on("load", function(){
         //      name: title,
         //      slot: outfit,
         //      price: value,
-        //      owner: owner,
+        //      owner: objectId,
         //      gender: gender,
         //      preview: preview,
         //      publish: publish,
+        //      designer: username,
         //      snapshots: snapshots,
         //      uuid: generateUUID(),
         //  };
@@ -2112,16 +2118,21 @@ $(viewer.contentWindow).on("load", function(){
         var entry = {};
         entry.kind = kind;
         entry.name = title;
-        entry.owner = owner;
         entry.gender = gender;
         entry.preview = preview;
         entry.publish = publish;
         entry.snapshots = snapshots;
         entry.price = value || null;
-        if (outfit) entry.slot = outfit; // important!
-        if (description) entry.description = description;
         entry._id = ObjectId();
         entry.uuid = generateUUID();
+
+        if (owner) {
+            entry.owner = owner.objectId;
+            entry.designer = owner.username;
+        }
+
+        if (outfit) entry.slot = outfit; // important!
+        if (description) entry.description = description;
 
         debugMode && console.log(entry);
 
