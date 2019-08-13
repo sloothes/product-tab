@@ -1211,13 +1211,9 @@ $(viewer.contentWindow).on("load", function(){
 
 $(viewer.contentWindow).on("load", function(){
 
-    const contentWindow = this;
-
     var user;
-    if (contentWindow.socket && contentWindow.socket.authToken) {
-        user = contentWindow.socket.authToken;
-        debugMode && console.log({"user":user});
-    }
+
+    const contentWindow = this;
 
 //  const viewer = document.getElementById("viewer");
     const tab = document.getElementById("product-tab");
@@ -1293,18 +1289,22 @@ $(viewer.contentWindow).on("load", function(){
         $(productState).val("");             // publish.
         $(genderDroplist).val("");           // gender.
         $(outfitDroplist).val("");           // slot.
-        $(snapshotItemSelector).remove();    // snapshots.
-        $(productDescription).val(LoremIpsum);  // description.
-        $(collectionDroplist).val("").change(); // collection.
-
-        masterSnapshot = null;               // preview.
-        productPreviewImage.src = noimage;   // preview.
+        masterSnapshot = null;                   // preview.
+        productPreviewImage.src = noimage;       // preview.
+        $(snapshotItemSelector).remove();        // snapshots.
         $(productSnapshots).children().remove(); // snapshots.
+        $(collectionDroplist).val("").change();  // collection.
+        $(productDescription).val(LoremIpsum);   // description.
 
     }
 
     //  Every change in product form,
     //  creates an fresh "entry" on-fly.
+
+    productFormChanged.add(function(){
+        user = contentWindow.socket.authToken;
+        debugMode && console.log({"user":user});
+    });
 
     productFormChanged.add(function(){
 
