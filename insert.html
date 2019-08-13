@@ -1220,17 +1220,18 @@ $(viewer.contentWindow).on("load", function(){
     }
 
 //  const viewer = document.getElementById("viewer");
-    const genderDroplist = document.getElementById("product-gender");
-    const outfitDroplist = document.getElementById("product-outfit");
-    const collectionDroplist = document.getElementById("product-collection");
+    const tab = document.getElementById("product-tab");
+    const genderDroplist = $(tab).find("#product-gender").get(0);
+    const outfitDroplist = $(tab).find("#product-outfit").get(0);
 
-    const outfitDroplistContainer = document.getElementById("product-outfit-container");
-    const collectionDroplistContainer = document.getElementById("product-collection-container");
+    const collectionDroplist = $(tab).find("#product-collection").get(0);
+    const outfitDroplistContainer = $(tab).find("#product-outfit-container").get(0);
+    const collectionDroplistContainer = $(tab).find("#product-collection-container").get(0);
 
-    const productTitle = document.getElementById("product-title");
-    const productState = document.getElementById("product-state");
-    const productValue = document.getElementById("product-value");
-    const productDescription = document.getElementById("product-description");
+    const productTitle = $(tab).find("#product-title").get(0);
+    const productState = $(tab).find("#product-state").get(0);
+    const productValue = $(tab).find("#product-value").get(0);
+    const productDescription = $(tab).find("#product-description").get(0);
 
 
     const NoSrc = "//:0";
@@ -1253,7 +1254,7 @@ $(viewer.contentWindow).on("load", function(){
     const snapshotItemSelector = ".snapshot-item.product-snapshot-item";
     const snapshotUploadBtnSelector = "div.form-control.snapshot-upload-btn";
 
-    const productPreviewPanel = document.getElementById("product-preview-panel");
+    const productPreviewPanel = $(tab).find("#product-preview-panel").get(0);
     const productPreviewImage = $(productPreviewPanel).find("img#product-preview").get(0);
     const imagePreviewInput   = $(productPreviewPanel).find("#image-file-input").get(0);
     const imageImportButton   = $(productPreviewPanel).find("#image-import-button").get(0);
@@ -1263,15 +1264,15 @@ $(viewer.contentWindow).on("load", function(){
     productPreviewImage.src = noimage;
     productDescription.value = LoremIpsum;
 
-    const productSnapshots = document.getElementById("product-snapshots");
-    const snapshotAddButton = document.getElementById("snapshot-add-button");
-    const snapshotMasterButton = document.getElementById("snapshot-master-button");
-    const snapshotUploadButton = document.getElementById("snapshot-upload-button");
-    const snapshotRemoveButton = document.getElementById("snapshot-remove-button");
+    const productSnapshots = $(tab).find("#product-snapshots").get(0);
+    const snapshotAddButton = $(tab).find("#snapshot-add-button").get(0);
+    const snapshotMasterButton = $(tab).find("#snapshot-master-button").get(0);
+    const snapshotUploadButton = $(tab).find("#snapshot-upload-button").get(0);
+    const snapshotRemoveButton = $(tab).find("#snapshot-remove-button").get(0);
 
-    const testProductButton = document.getElementById("product-test-button");
-    const saveProductButton = document.getElementById("product-save-button");
-    const cancelProductButton = document.getElementById("product-cancel-button");
+    const testProductButton = $(tab).find("#product-test-button").get(0);
+    const saveProductButton = $(tab).find("#product-save-button").get(0);
+    const cancelProductButton = $(tab).find("#product-cancel-button").get(0);
 
     var masterSnapshot;
     var selectedSnapshot;
@@ -1345,7 +1346,6 @@ $(viewer.contentWindow).on("load", function(){
         if (length) entry.snapshots = $(snapshotItemSelector).toArray(); // [elements].
         if (owner) entry.owner = owner.objectId;
         if (owner) entry.designer = owner.username;
-
 
         entry.publish = publish;
 
@@ -1932,14 +1932,6 @@ $(viewer.contentWindow).on("load", function(){
 
         }
 
-        if ( !outfitDroplist.value ) {
-
-            var msg = "You don't have any outfit slot selected.<br>";
-            //      + "Please select an outfit slot and try again.";
-            //  bootbox.dialog( cancelDialogOptions(msg) );
-            userNotificationDialogMessage( msg );   // not required.
-        }
-
         if ( !productTitle.value ) {
 
             var msg = "Please type a title for <br>"
@@ -2028,6 +2020,13 @@ $(viewer.contentWindow).on("load", function(){
 
         };
 
+        if ( !outfitDroplist.value ) {
+            var msg = "You don't have any outfit slot selected.<br>";
+            //      + "Please select an outfit slot and try again.";
+            //  bootbox.dialog( cancelDialogOptions(msg) );
+            userNotificationDialogMessage( msg );   // not required.
+        }
+
     //  SNAPSHOTS.
 
         var snapshots = [];                      // [ imgur ids ].
@@ -2073,8 +2072,8 @@ $(viewer.contentWindow).on("load", function(){
         if (!title) return;   // required.
         if (!owner) return;   // required.
         if (!gender) return;  // required.
-    //  if (!outfit) return;  // not require.
         if (!preview) return; // required.
+    //  if (!outfit) return;  // not require.
 
     //  SNAPSHOTS.
 
