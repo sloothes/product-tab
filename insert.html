@@ -578,6 +578,50 @@
 
 <script>
 
+(function(){
+
+    const snapshotsContainer= $("#product-snapshots").get(0);
+
+    SwipeMouseScrolling( snapshotsContainer );
+
+    function SwipeMouseScrolling(element){
+
+        if ( !window.Hammer ) return;
+        if ( window.isMobile ) return;
+
+        //  For horizontal scrolling 
+        //  overflow-y must be "hidden".
+
+        element.style["overflow-y"] = "hidden";
+
+        //  Smoother scroll.
+
+        element.style["scroll-behavior"] = "smooth";
+
+        //  Create a manager to manager the element.
+
+        var manager = new Hammer(element);
+
+        //  Subscribe to a desired event.
+
+        manager.on("swipe", function(e) {
+
+            if ( e.offsetDirection === 4 || e.offsetDirection === 2 ) {
+
+                element.scrollLeft -= e.deltaX;
+
+            }
+
+        });
+
+    }
+
+})();
+
+</script>
+
+<script>
+
 $(viewer.contentWindow).on("load", function(){
 
     const contentWindow = this;
